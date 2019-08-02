@@ -9,6 +9,12 @@
 (defn extract-fourth-and-fifth-bit [b]
   (bit-and b 2r00011000))
 
+(defn extract-last-four-bits [b]
+  (bit-and b 2r00001111))
+
+(defn extract-last-five-bits [b]
+  (bit-and b 2r00011111))
+
 (defn get-form [byte]
   (cond
     (= byte 190) :extended
@@ -22,3 +28,10 @@
     :short (if (= (extract-fourth-and-fifth-bit byte) 2r00011000) :0OP :1OP)
     :extended :VAR
     :long :2OP))
+
+(defn get-opcode-number [bytes]
+  (case (get-form (first bytes))
+    :short (extract-last-four-bits (first bytes))
+    :long (extract-last-five-bits (first bytes))
+    :variable (extract-last-five-bits (first bytes))
+    :extended (second bytes)))

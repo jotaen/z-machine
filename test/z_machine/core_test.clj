@@ -31,3 +31,18 @@
     (is (= (get-operand-count 2r11000000) :2OP)))
   (testing "`extended`"
     (is (= (get-operand-count 190) :VAR))))
+
+(deftest test-get-opcode-number
+  (testing "`short`"
+    (is (= (get-opcode-number [2r10010101]) 5))
+    (is (= (get-opcode-number [2r10011000]) 8))
+    (is (= (get-opcode-number [2r10011001]) 9)))
+  (testing "`long`"
+    (is (= (get-opcode-number [2r01000000]) 0))
+    (is (= (get-opcode-number [2r01011010]) 26))
+    (is (= (get-opcode-number [2r01011110]) 30)))
+  (testing "`variable`"
+    (is (= (get-opcode-number [2r11001000]) 8))
+    (is (= (get-opcode-number [2r11001011]) 11)))
+  (testing "`extended`"
+    (is (= (get-opcode-number [190 7]) 7))))
