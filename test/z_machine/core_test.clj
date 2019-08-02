@@ -73,3 +73,10 @@
     (is (= (get-operand-types [190 2r11111100 2r11011000]) [:large-constant :variable :small-constant :omitted]))))
   ;; TODO assert that ommited must be be followed by omitted
   ;; TODO handle special case mentioned in 4.4.3.1 (double variable VAR opcodes)
+
+
+(deftest test-get-operands
+  (testing "`0OP`"
+    (is (= (get-operands [2r10011000]) [])))
+  (testing "`1OP`"
+    (is (= (get-operands [2r10001000 2r10000001]) [129]))))

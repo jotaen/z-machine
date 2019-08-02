@@ -56,3 +56,8 @@
         (two-digit-type (bits-extract b3 2 2))
         (two-digit-type (bits-extract b3 0 2)) 
       ])))
+
+(defn get-operands [bytes]
+  (case (get-operand-count (first bytes))
+      :0OP []
+      :1OP [(second bytes)]))
