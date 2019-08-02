@@ -2,6 +2,24 @@
   (:require [clojure.test :refer :all]
             [z-machine.opcode :refer :all]))
 
+; x x x x x x x x
+; 7 6 5 4 3 2 1 0
+;0 1 2 3 4 5 6 7
+
+(def opcodes {
+  ;;; 0OP
+  :rtrue 2r10110000
+  :rfalse 2r10110001
+  :print 2r10110010
+  :restart 2r10110111
+
+  ;;; 1OP
+  :jz 2r10100000
+
+  ;;; 2OP
+  :and 2r00001001
+})
+
 (deftest test-bits-extract
   (testing "it all"
     (is (= (bits-extract 2r01000000 0 2) 2r00000001))
@@ -13,7 +31,7 @@
 (deftest test-get-form
   (testing "`form-short`"
     (is (= (get-form 2r10000000) :form-short))
-    (is (= (get-form 2r10000111) :form-short))
+    (is (= (get-form (opcodes :rtrue)) :form-short))
     (is (= (get-form 2r10100000) :form-short)))
   (testing "`form-long`"
     (is (= (get-form 2r01011110) :form-long))
@@ -28,7 +46,7 @@
 
 (deftest test-get-operand-count
   (testing "`form-short`"
-    (is (= (get-operand-count 2r10011000) :0OP))
+    (is (= (get-operand-count (opcodes :rtrue)) :0OP))
     (is (= (get-operand-count 2r10000000) :1OP))
     (is (= (get-operand-count 2r10001000) :1OP))
     (is (= (get-operand-count 2r10010000) :1OP)))
