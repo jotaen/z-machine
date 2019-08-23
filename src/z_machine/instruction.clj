@@ -81,3 +81,21 @@
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xdf) (make-variable-form bytes))))
+
+(defn decode-operand-type [bytes]
+  (defn optype [val]
+    (case val
+      2r00 :type-large-constant
+      2r10 :type-variable
+      2r01 :type-small-constant
+      2r11 :type-omitted))
+  (let [
+    [first] bytes
+    type1 (optype (bit-and (bit-shift-right first 6) 2r11))
+    type2 (optype (bit-and (bit-shift-right first 4) 2r11))
+    type3 (optype (bit-and (bit-shift-right first 2) 2r11))
+    type4 (optype (bit-and (bit-shift-right first 0) 2r11))
+    ]
+    (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])
+  )
+)

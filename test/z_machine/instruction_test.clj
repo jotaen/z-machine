@@ -202,6 +202,36 @@
         :store 0x01
       }))
 
+    ; (is (= (decode (:mul-VL instructions)) {
+    ;     :name :mul
+    ;     :form :form-variable
+    ;     :opcode 0xd6
+    ;     :operand-count :2OP
+    ;     :operands [
+    ;       [:type-variable 0x01]
+    ;       [:type-large-constant 0x02 0x03]
+    ;     ]
+    ;     :branch-offset nil
+    ;     :store 0x00
+    ;   }))
 
     )
   )
+
+(deftest operand-type-decoder
+  (testing "single byte"
+    (is (= (decode-operand-type [0x2f]) [:type-large-constant :type-variable]))
+    (is (= (decode-operand-type [0x8f]) [:type-variable :type-large-constant]))
+    (is (= (decode-operand-type [0x0b]) [
+      :type-large-constant
+      :type-large-constant
+      :type-variable
+    ]))
+    (is (= (decode-operand-type [0x68]) [
+      :type-small-constant
+      :type-variable
+      :type-variable
+      :type-large-constant
+    ]))
+  )
+)
