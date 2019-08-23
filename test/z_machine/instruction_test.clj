@@ -19,6 +19,9 @@
   :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
   :sub-LV [0xd5 0x2f 0x04 0xe9 0x03 0x01]
   :mul-VL [0xd6 0x8f 0x01 0x02 0x03 0x00]
+  :mul-LL [0xd6 0x0f 0x03 0x04 0x05 0x06 0x00]
+  :call [0xe0 0xff 0x01]
+  :call-LLL [0xe0 0x03 0x01 0x02 0x03 0x04 0x05 0x06 0x09]
 })
 
 (deftest instruction-decoder
@@ -189,6 +192,18 @@
         :branch-offset nil
         :store 0x00
       }))
+    (is (= (decode (:mul-LL instructions)) {
+        :name :mul
+        :form :form-variable
+        :opcode 0xd6
+        :operand-count :2OP
+        :operands [
+          [:type-large-constant 0x03 0x04]
+          [:type-large-constant 0x05 0x06]
+        ]
+        :branch-offset nil
+        :store 0x00
+      }))
     (is (= (decode (:sub-LV instructions)) {
         :name :sub
         :form :form-variable
@@ -213,10 +228,31 @@
         ]
         :branch-offset nil
         :store 0x00
-      }))
+      })))
 
-    )
-  )
+  (testing "range 0xe0 to 0xff"
+    (is (= (decode (:call instructions)) {
+      :name :call
+      :form :form-variable
+      :opcode 0xe0
+      :operand-count :VAR
+      :operands []
+      :branch-offset nil
+      :store 0x01
+      }))
+    (is (= (decode (:call-LLL instructions)) {
+      :name :call
+      :form :form-variable
+      :opcode 0xe0
+      :operand-count :VAR
+      :operands [
+        [:type-large-constant 0x01 0x02]
+        [:type-large-constant 0x03 0x04]
+        [:type-large-constant 0x05 0x06]
+      ]
+      :branch-offset nil
+      :store 0x09
+      })))
 
 (deftest operand-type-decoder
   (testing "single byte"
@@ -232,6 +268,4 @@
       :type-variable
       :type-variable
       :type-large-constant
-    ]))
-  )
-)
+    ])))))

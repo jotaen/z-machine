@@ -8,6 +8,7 @@
     (0xb5) :save
     (0xd6) :mul
     (0xd5) :sub
+    (0xe0) :call
   ))
 
 (defn make-long-form [bytes]
@@ -95,19 +96,22 @@
               (drop 1 bytes)
               (conj result [:type-variable (first bytes)]))))))
     (iter operand-types bytes []))
+  (defn count-bytes-for-operands [ts]
+    (reduce (fn [a t] (+ a (if (= t :type-large-constant) 2 1))) 0 ts))
   (let [
-    [first second third fourth fifth sixth] bytes
+    [first second & rest] bytes
     operand-types (decode-operand-types [second])
-    operands (extract-operands operand-types (drop 2 bytes))
+    operands (extract-operands operand-types rest)
+    operand-count (if (<= first 0xdf) :2OP :VAR)
   ]
   {
     :name (instruction-names first)
     :form :form-variable
     :opcode first
-    :operand-count :2OP
+    :operand-count operand-count
     :operands operands
     :branch-offset nil
-    :store sixth
+    :store (nth rest (count-bytes-for-operands operand-types))
   }))
 
 (defn decode [bytes] 
@@ -115,4 +119,4 @@
     (cond
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
-      (<= first 0xdf) (make-variable-form bytes))))
+      (<= first 0xff) (make-variable-form bytes))))
