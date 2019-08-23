@@ -30,7 +30,8 @@
     :opcode first
     :operand-count :2OP
     :operands operands
-    :branch-offset [fourth]}))
+    :branch-offset [fourth]
+    :store nil}))
 
 (defn make-short-form [bytes]
   (let [
@@ -51,7 +52,8 @@
     :opcode first
     :operand-count operand-count
     :operands operands
-    :branch-offset branch-offset}))
+    :branch-offset branch-offset
+    :store nil}))
 
 (defn decode [bytes] 
   (let [[first second third fourth] bytes]

@@ -30,6 +30,7 @@
           [:type-small-constant 0x00]
         ]
         :branch-offset [0xd4]
+        :store nil
       }))
     (is (= (decode (:dec_chk-SS instructions)) {
         :name :dec_chk
@@ -41,6 +42,7 @@
           [:type-small-constant 0xab]
         ]
         :branch-offset [0xd5]
+        :store nil
       })))
 
   (testing "range 0x20 to 0x3f"
@@ -54,6 +56,7 @@
           [:type-variable 0x00]
         ]
         :branch-offset [0xd4]
+        :store nil
       }))
     (is (= (decode (:dec_chk-SV instructions)) {
         :name :dec_chk
@@ -65,6 +68,7 @@
           [:type-variable 0x1e]
         ]
         :branch-offset [0xd6]
+        :store nil
       })))
 
   (testing "range 0x40 to 0x5f"
@@ -78,6 +82,7 @@
           [:type-small-constant 0x02]
         ]
         :branch-offset [0xd6]
+        :store nil
       }))
     (is (= (decode (:dec_chk-VS instructions)) {
         :name :dec_chk
@@ -89,6 +94,7 @@
           [:type-small-constant 0x21]
         ]
         :branch-offset [0xd4]
+        :store nil
       })))
 
   (testing "range 0x60 to 0x7f"
@@ -102,6 +108,7 @@
           [:type-variable 0x32]
         ]
         :branch-offset [0xd5]
+        :store nil
       }))
     (is (= (decode (:dec_chk-VV instructions)) {
         :name :dec_chk
@@ -113,6 +120,7 @@
           [:type-variable 0x10]
         ]
         :branch-offset [0xd7]
+        :store nil
       })))
 
   (testing "range 0x80 to 0x8f"
@@ -125,6 +133,7 @@
           [:type-large-constant 0xdd 0x23]
         ]
         :branch-offset [0xd3]
+        :store nil
       })))
 
   (testing "range 0x90 to 0x9f"
@@ -137,6 +146,7 @@
           [:type-small-constant 0x1a]
         ]
         :branch-offset [0xd3]
+        :store nil
       })))
 
   (testing "range 0xa0 to 0xaf"
@@ -149,6 +159,7 @@
           [:type-variable 0x65]
         ]
         :branch-offset [0xd3]
+        :store nil
       })))
 
   (testing "range 0xb0 to 0xbf"
@@ -159,6 +170,7 @@
         :operand-count :0OP
         :operands []
         :branch-offset [0xd8]
+        :store nil
       })))
 
   )
