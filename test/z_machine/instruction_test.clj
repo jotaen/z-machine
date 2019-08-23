@@ -12,6 +12,10 @@
   :dec_chk-VS [0x44 0x1e 0x21 0xd4]
   :inc_chk-VV [0x65 0x10 0x32 0xd5]
   :dec_chk-VV [0x64 0x32 0x10 0xd7]
+  :jz-L [0x80 0xdd 0x23 0xd3]
+  :jz-S [0x90 0x1a 0xd3]
+  :jz-V [0xa0 0x65 0xd3]
+  :save [0xb5 0xd8]
 })
 
 (deftest instruction-decoder
@@ -110,4 +114,51 @@
         ]
         :branch-offset [0xd7]
       })))
-)
+
+  (testing "range 0x80 to 0x8f"
+    (is (= (decode (:jz-L instructions)) {
+        :name :jz
+        :form :form-short
+        :opcode 0x80
+        :operand-count :1OP
+        :operands [
+          [:type-large-constant 0xdd 0x23]
+        ]
+        :branch-offset [0xd3]
+      })))
+
+  (testing "range 0x90 to 0x9f"
+    (is (= (decode (:jz-S instructions)) {
+        :name :jz
+        :form :form-short
+        :opcode 0x90
+        :operand-count :1OP
+        :operands [
+          [:type-small-constant 0x1a]
+        ]
+        :branch-offset [0xd3]
+      })))
+
+  (testing "range 0xa0 to 0xaf"
+    (is (= (decode (:jz-V instructions)) {
+        :name :jz
+        :form :form-short
+        :opcode 0xa0
+        :operand-count :1OP
+        :operands [
+          [:type-variable 0x65]
+        ]
+        :branch-offset [0xd3]
+      })))
+
+  (testing "range 0xb0 to 0xbf"
+    (is (= (decode (:save instructions)) {
+        :name :save
+        :form :form-short
+        :opcode 0xb5
+        :operand-count :0OP
+        :operands []
+        :branch-offset [0xd8]
+      })))
+
+  )

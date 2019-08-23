@@ -4,6 +4,8 @@
   (case byte
     (0x04 0x24 0x44 0x64) :dec_chk
     (0x05 0x25 0x45 0x65) :inc_chk
+    (0x80 0x90 0xa0) :jz
+    (0xb5) :save
   ))
 
 (defn operands-long-form [bytes]
@@ -31,4 +33,32 @@
         :opcode first
         :operand-count :2OP
         :operands (operands-long-form bytes)
-        :branch-offset [fourth]})))
+        :branch-offset [fourth]}
+      (<= first 0x8f) {
+        :name (instruction-names first)
+        :form :form-short
+        :opcode first
+        :operand-count :1OP
+        :operands [[:type-large-constant second third]]
+        :branch-offset [fourth]}
+      (<= first 0x9f) {
+        :name (instruction-names first)
+        :form :form-short
+        :opcode first
+        :operand-count :1OP
+        :operands [[:type-small-constant second]]
+        :branch-offset [third]}
+      (<= first 0xaf) {
+        :name (instruction-names first)
+        :form :form-short
+        :opcode first
+        :operand-count :1OP
+        :operands [[:type-variable second]]
+        :branch-offset [third]}
+      (<= first 0xbf) {
+        :name (instruction-names first)
+        :form :form-short
+        :opcode first
+        :operand-count :0OP
+        :operands []
+        :branch-offset [second]})))
