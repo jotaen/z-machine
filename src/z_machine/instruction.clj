@@ -32,35 +32,29 @@
     :operands operands
     :branch-offset [fourth]}))
 
+(defn make-short-form [bytes]
+  (let [
+    [first second third fourth] bytes
+    operand-count (if (<= first 0xaf) :1OP :0OP)
+    operands (cond
+      (<= first 0x8f) [[:type-large-constant second third]]
+      (<= first 0x9f) [[:type-small-constant second]]
+      (<= first 0xaf) [[:type-variable second]]
+      (<= first 0xbf) [])
+    branch-offset (cond
+      (<= first 0x8f) [fourth]
+      (<= first 0xaf) [third]
+      (<= first 0xbf) [second])]
+  {
+    :name (instruction-names first)
+    :form :form-short
+    :opcode first
+    :operand-count operand-count
+    :operands operands
+    :branch-offset branch-offset}))
+
 (defn decode [bytes] 
   (let [[first second third fourth] bytes]
     (cond
       (<= first 0x7f) (make-long-form bytes)
-      (<= first 0x8f) {
-        :name (instruction-names first)
-        :form :form-short
-        :opcode first
-        :operand-count :1OP
-        :operands [[:type-large-constant second third]]
-        :branch-offset [fourth]}
-      (<= first 0x9f) {
-        :name (instruction-names first)
-        :form :form-short
-        :opcode first
-        :operand-count :1OP
-        :operands [[:type-small-constant second]]
-        :branch-offset [third]}
-      (<= first 0xaf) {
-        :name (instruction-names first)
-        :form :form-short
-        :opcode first
-        :operand-count :1OP
-        :operands [[:type-variable second]]
-        :branch-offset [third]}
-      (<= first 0xbf) {
-        :name (instruction-names first)
-        :form :form-short
-        :opcode first
-        :operand-count :0OP
-        :operands []
-        :branch-offset [second]})))
+      (<= first 0xbf) (make-short-form bytes))))
