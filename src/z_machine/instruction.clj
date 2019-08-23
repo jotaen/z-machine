@@ -82,7 +82,7 @@
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xdf) (make-variable-form bytes))))
 
-(defn decode-operand-type [bytes]
+(defn decode-operand-types [bytes]
   (defn optype [val]
     (case val
       2r00 :type-large-constant

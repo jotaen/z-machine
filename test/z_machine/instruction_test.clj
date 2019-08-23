@@ -220,14 +220,14 @@
 
 (deftest operand-type-decoder
   (testing "single byte"
-    (is (= (decode-operand-type [0x2f]) [:type-large-constant :type-variable]))
-    (is (= (decode-operand-type [0x8f]) [:type-variable :type-large-constant]))
-    (is (= (decode-operand-type [0x0b]) [
+    (is (= (decode-operand-types [0x2f]) [:type-large-constant :type-variable]))
+    (is (= (decode-operand-types [0x8f]) [:type-variable :type-large-constant]))
+    (is (= (decode-operand-types [0x0b]) [
       :type-large-constant
       :type-large-constant
       :type-variable
     ]))
-    (is (= (decode-operand-type [0x68]) [
+    (is (= (decode-operand-types [0x68]) [
       :type-small-constant
       :type-variable
       :type-variable
