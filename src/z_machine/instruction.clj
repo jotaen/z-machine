@@ -6,6 +6,8 @@
     (0x05 0x25 0x45 0x65) :inc_chk
     (0x80 0x90 0xa0) :jz
     (0xb5) :save
+    (0xd6) :mul
+    (0xd5) :sub
   ))
 
 (defn make-long-form [bytes]
@@ -55,8 +57,27 @@
     :branch-offset branch-offset
     :store nil}))
 
+(defn make-variable-form [bytes]
+  (let [
+    [first second third fourth fifth sixth] bytes
+    operands [
+      [:type-large-constant third fourth]
+      [:type-variable fifth]
+    ]
+  ]
+  {
+    :name (instruction-names first)
+    :form :form-variable
+    :opcode first
+    :operand-count :2OP
+    :operands operands
+    :branch-offset nil
+    :store sixth
+  }))
+
 (defn decode [bytes] 
-  (let [[first second third fourth] bytes]
+  (let [[first second third fourth fifth sixth] bytes]
     (cond
       (<= first 0x7f) (make-long-form bytes)
-      (<= first 0xbf) (make-short-form bytes))))
+      (<= first 0xbf) (make-short-form bytes)
+      (<= first 0xdf) (make-variable-form bytes))))

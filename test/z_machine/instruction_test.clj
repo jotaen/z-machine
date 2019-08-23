@@ -16,6 +16,9 @@
   :jz-S [0x90 0x1a 0xd3]
   :jz-V [0xa0 0x65 0xd3]
   :save [0xb5 0xd8]
+  :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
+  :sub-LV [0xd5 0x2f 0x04 0xe9 0x03 0x01]
+  :mul-VL [0xd6 0x8f 0x01 0xe2 0x03 0x00]
 })
 
 (deftest instruction-decoder
@@ -173,4 +176,32 @@
         :store nil
       })))
 
+  (testing "range 0xc0 to 0xdf"
+    (is (= (decode (:mul-LV instructions)) {
+        :name :mul
+        :form :form-variable
+        :opcode 0xd6
+        :operand-count :2OP
+        :operands [
+          [:type-large-constant 0x03 0xe8]
+          [:type-variable 0x02]
+        ]
+        :branch-offset nil
+        :store 0x00
+      }))
+    (is (= (decode (:sub-LV instructions)) {
+        :name :sub
+        :form :form-variable
+        :opcode 0xd5
+        :operand-count :2OP
+        :operands [
+          [:type-large-constant 0x04 0xe9]
+          [:type-variable 0x03]
+        ]
+        :branch-offset nil
+        :store 0x01
+      }))
+
+
+    )
   )
