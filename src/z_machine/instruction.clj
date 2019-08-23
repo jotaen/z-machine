@@ -8,9 +8,10 @@
     (0xb5) :save
   ))
 
-(defn operands-long-form [bytes]
-  (let [[first second third] bytes]
-    (cond
+(defn make-long-form [bytes]
+  (let [
+    [first second third fourth] bytes
+    operands (cond
       (< first 0x20) [
         [:type-small-constant second]
         [:type-small-constant third]]
@@ -22,18 +23,19 @@
         [:type-small-constant third]]
       :else [
           [:type-variable second]
-          [:type-variable third]])))
+          [:type-variable third]])]
+  {
+    :name (instruction-names first)
+    :form :form-long
+    :opcode first
+    :operand-count :2OP
+    :operands operands
+    :branch-offset [fourth]}))
 
 (defn decode [bytes] 
   (let [[first second third fourth] bytes]
     (cond
-      (<= first 0x7f) {
-        :name (instruction-names first)
-        :form :form-long
-        :opcode first
-        :operand-count :2OP
-        :operands (operands-long-form bytes)
-        :branch-offset [fourth]}
+      (<= first 0x7f) (make-long-form bytes)
       (<= first 0x8f) {
         :name (instruction-names first)
         :form :form-short
