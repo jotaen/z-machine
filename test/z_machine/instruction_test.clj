@@ -18,7 +18,7 @@
   :save [0xb5 0xd8]
   :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
   :sub-LV [0xd5 0x2f 0x04 0xe9 0x03 0x01]
-  :mul-VL [0xd6 0x8f 0x01 0xe2 0x03 0x00]
+  :mul-VL [0xd6 0x8f 0x01 0x02 0x03 0x00]
 })
 
 (deftest instruction-decoder
@@ -202,18 +202,18 @@
         :store 0x01
       }))
 
-    ; (is (= (decode (:mul-VL instructions)) {
-    ;     :name :mul
-    ;     :form :form-variable
-    ;     :opcode 0xd6
-    ;     :operand-count :2OP
-    ;     :operands [
-    ;       [:type-variable 0x01]
-    ;       [:type-large-constant 0x02 0x03]
-    ;     ]
-    ;     :branch-offset nil
-    ;     :store 0x00
-    ;   }))
+    (is (= (decode (:mul-VL instructions)) {
+        :name :mul
+        :form :form-variable
+        :opcode 0xd6
+        :operand-count :2OP
+        :operands [
+          [:type-variable 0x01]
+          [:type-large-constant 0x02 0x03]
+        ]
+        :branch-offset nil
+        :store 0x00
+      }))
 
     )
   )

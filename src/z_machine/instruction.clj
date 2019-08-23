@@ -57,31 +57,6 @@
     :branch-offset branch-offset
     :store nil}))
 
-(defn make-variable-form [bytes]
-  (let [
-    [first second third fourth fifth sixth] bytes
-    operands [
-      [:type-large-constant third fourth]
-      [:type-variable fifth]
-    ]
-  ]
-  {
-    :name (instruction-names first)
-    :form :form-variable
-    :opcode first
-    :operand-count :2OP
-    :operands operands
-    :branch-offset nil
-    :store sixth
-  }))
-
-(defn decode [bytes] 
-  (let [[first second third fourth fifth sixth] bytes]
-    (cond
-      (<= first 0x7f) (make-long-form bytes)
-      (<= first 0xbf) (make-short-form bytes)
-      (<= first 0xdf) (make-variable-form bytes))))
-
 (defn decode-operand-types [bytes]
   (defn optype [val]
     (case val
@@ -99,3 +74,45 @@
     (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])
   )
 )
+
+(defn make-variable-form [bytes]
+  (defn extract-operands [operand-types bytes]
+    (defn iter [operand-types bytes result]
+      (if (empty? operand-types)
+        result
+        (let [[op & next-ops] operand-types]
+          (case op
+            :type-large-constant (iter
+              next-ops
+              (drop 2 bytes)
+              (conj result [:type-large-constant (first bytes) (second bytes)]))
+            :type-small-constant (iter
+              next-ops
+              (drop 1 bytes)
+              (conj result [:type-small-constant (first bytes)]))
+            :type-variable (iter
+              next-ops
+              (drop 1 bytes)
+              (conj result [:type-variable (first bytes)]))))))
+    (iter operand-types bytes []))
+  (let [
+    [first second third fourth fifth sixth] bytes
+    operand-types (decode-operand-types [second])
+    operands (extract-operands operand-types (drop 2 bytes))
+  ]
+  {
+    :name (instruction-names first)
+    :form :form-variable
+    :opcode first
+    :operand-count :2OP
+    :operands operands
+    :branch-offset nil
+    :store sixth
+  }))
+
+(defn decode [bytes] 
+  (let [[first second third fourth fifth sixth] bytes]
+    (cond
+      (<= first 0x7f) (make-long-form bytes)
+      (<= first 0xbf) (make-short-form bytes)
+      (<= first 0xdf) (make-variable-form bytes))))
