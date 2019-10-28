@@ -1,6 +1,7 @@
 (ns z-machine.instruction)
 
 (defn instruction-names [byte]
+  ; list incomplete, variants with offsets still missing
   (case byte
     (0x04 0x24 0x44 0x64) :dec_chk
     (0x05 0x25 0x45 0x65) :inc_chk
