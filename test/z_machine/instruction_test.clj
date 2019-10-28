@@ -23,6 +23,8 @@
   :call [0xe0 0xff 0x01]
   :call-LLL [0xe0 0x03 0x01 0x02 0x03 0x04 0x05 0x06 0x09]
   :set_font [0xbe 0x04 0x3f 0x10 0xd2 0x08]
+  :save_undo [0xbe 0x09 0xff 0x04]
+  :log_shift [0xbe 0x02 0x6f 0xae 0x8c 0x09]
 })
 
 (deftest instruction-decoder
@@ -260,12 +262,33 @@
       :name :set_font
       :form :form-extended
       :opcode 0x04
-      :operand-count :1OP
+      :operand-count :VAR
       :operands [
         [:type-large-constant 0x10 0xd2]
       ]
       :branch-offset nil
       :store 0x08
+      }))
+    (is (= (decode (:save_undo instructions)) {
+      :name :save_undo
+      :form :form-extended
+      :opcode 0x09
+      :operand-count :VAR
+      :operands []
+      :branch-offset nil
+      :store 0x04
+      }))
+    (is (= (decode (:log_shift instructions)) {
+      :name :log_shift
+      :form :form-extended
+      :opcode 0x02
+      :operand-count :VAR
+      :operands [
+        [:type-small-constant 0xae]
+        [:type-variable 0x8c]
+      ]
+      :branch-offset nil
+      :store 0x09
       })))
 
 (deftest operand-type-decoder

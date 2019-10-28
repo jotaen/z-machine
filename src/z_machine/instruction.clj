@@ -14,8 +14,46 @@
 
 (defn instruction-names-extended [byte]
   (case byte
+    (0x02) :log_shift
     (0x04) :set_font
+    (0x09) :save_undo
   ))
+
+(defn decode-operand-types [bytes]
+  (defn optype [val]
+    (case val
+      2r00 :type-large-constant
+      2r10 :type-variable
+      2r01 :type-small-constant
+      2r11 :type-omitted))
+  (let [
+    [first] bytes
+    type1 (optype (bit-and (bit-shift-right first 6) 2r11))
+    type2 (optype (bit-and (bit-shift-right first 4) 2r11))
+    type3 (optype (bit-and (bit-shift-right first 2) 2r11))
+    type4 (optype (bit-and (bit-shift-right first 0) 2r11))
+    ]
+    (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])))
+
+(defn extract-operands [operand-types bytes]
+    (defn iter [operand-types bytes result]
+      (if (empty? operand-types)
+        result
+        (let [[op & next-ops] operand-types]
+          (case op
+            :type-large-constant (iter
+              next-ops
+              (drop 2 bytes)
+              (conj result [:type-large-constant (first bytes) (second bytes)]))
+            :type-small-constant (iter
+              next-ops
+              (drop 1 bytes)
+              (conj result [:type-small-constant (first bytes)]))
+            :type-variable (iter
+              next-ops
+              (drop 1 bytes)
+              (conj result [:type-variable (first bytes)]))))))
+    (iter operand-types bytes []))
 
 (defn make-long-form [bytes]
   (let [
@@ -64,42 +102,7 @@
     :branch-offset branch-offset
     :store nil}))
 
-(defn decode-operand-types [bytes]
-  (defn optype [val]
-    (case val
-      2r00 :type-large-constant
-      2r10 :type-variable
-      2r01 :type-small-constant
-      2r11 :type-omitted))
-  (let [
-    [first] bytes
-    type1 (optype (bit-and (bit-shift-right first 6) 2r11))
-    type2 (optype (bit-and (bit-shift-right first 4) 2r11))
-    type3 (optype (bit-and (bit-shift-right first 2) 2r11))
-    type4 (optype (bit-and (bit-shift-right first 0) 2r11))
-    ]
-    (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])))
-
 (defn make-variable-form [bytes]
-  (defn extract-operands [operand-types bytes]
-    (defn iter [operand-types bytes result]
-      (if (empty? operand-types)
-        result
-        (let [[op & next-ops] operand-types]
-          (case op
-            :type-large-constant (iter
-              next-ops
-              (drop 2 bytes)
-              (conj result [:type-large-constant (first bytes) (second bytes)]))
-            :type-small-constant (iter
-              next-ops
-              (drop 1 bytes)
-              (conj result [:type-small-constant (first bytes)]))
-            :type-variable (iter
-              next-ops
-              (drop 1 bytes)
-              (conj result [:type-variable (first bytes)]))))))
-    (iter operand-types bytes []))
   (defn count-bytes-for-operands [ts]
     (reduce (fn [a t] (+ a (if (= t :type-large-constant) 2 1))) 0 ts))
   (let [
@@ -120,15 +123,15 @@
 
 (defn make-extended-form [bytes]
   (let [
-    [first second third fourth fifth] bytes
+    [first second third & rest] bytes
+    operand-types (decode-operand-types [third])
+    operands (extract-operands operand-types rest)
   ] {
     :name (instruction-names-extended second)
     :form :form-extended
     :opcode second
-    :operand-count :1OP
-    :operands [
-      [:type-large-constant fourth fifth]
-    ]
+    :operand-count :VAR
+    :operands operands
     :branch-offset nil
     :store (last bytes)
   }))
