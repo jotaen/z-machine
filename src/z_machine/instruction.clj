@@ -73,9 +73,7 @@
     type3 (optype (bit-and (bit-shift-right first 2) 2r11))
     type4 (optype (bit-and (bit-shift-right first 0) 2r11))
     ]
-    (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])
-  )
-)
+    (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])))
 
 (defn make-variable-form [bytes]
   (defn extract-operands [operand-types bytes]
