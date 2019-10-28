@@ -12,6 +12,11 @@
     (0xe0) :call
   ))
 
+(defn instruction-names-extended [byte]
+  (case byte
+    (0x04) :set_font
+  ))
+
 (defn make-long-form [bytes]
   (let [
     [first second third fourth] bytes
@@ -113,9 +118,25 @@
     :store (nth rest (count-bytes-for-operands operand-types))
   }))
 
+(defn make-extended-form [bytes]
+  (let [
+    [first second third fourth fifth] bytes
+  ] {
+    :name (instruction-names-extended second)
+    :form :form-extended
+    :opcode second
+    :operand-count :1OP
+    :operands [
+      [:type-large-constant fourth fifth]
+    ]
+    :branch-offset nil
+    :store (last bytes)
+  }))
+ 
 (defn decode [bytes] 
   (let [[first second third fourth fifth sixth] bytes]
     (cond
+      (= first 0xbe) (make-extended-form bytes)
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xff) (make-variable-form bytes))))

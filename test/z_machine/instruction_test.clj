@@ -22,6 +22,7 @@
   :mul-LL [0xd6 0x0f 0x03 0x04 0x05 0x06 0x00]
   :call [0xe0 0xff 0x01]
   :call-LLL [0xe0 0x03 0x01 0x02 0x03 0x04 0x05 0x06 0x09]
+  :set_font [0xbe 0x04 0x3f 0x10 0xd2 0x08]
 })
 
 (deftest instruction-decoder
@@ -252,6 +253,19 @@
       ]
       :branch-offset nil
       :store 0x09
+      })))
+
+  (testing "range 0xbe"
+    (is (= (decode (:set_font instructions)) {
+      :name :set_font
+      :form :form-extended
+      :opcode 0x04
+      :operand-count :1OP
+      :operands [
+        [:type-large-constant 0x10 0xd2]
+      ]
+      :branch-offset nil
+      :store 0x08
       })))
 
 (deftest operand-type-decoder
