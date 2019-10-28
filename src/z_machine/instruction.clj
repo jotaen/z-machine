@@ -10,6 +10,8 @@
     (0xd6) :mul
     (0xd5) :sub
     (0xe0) :call
+    (0xec) :call_vs2
+    (0xfa) :call_vn2
   ))
 
 (defn instruction-names-extended [byte]
@@ -119,6 +121,22 @@
     :store (last bytes)
   }))
 
+(defn make-variable-form-special [bytes]
+  (let [
+    [first second third & rest] bytes
+    operand-types (concat (decode-operand-types [second]) (decode-operand-types [third]))
+    operands (extract-operands operand-types rest)
+  ]
+  {
+    :name (instruction-names first)
+    :form :form-variable
+    :opcode first
+    :operand-count :VAR
+    :operands operands
+    :branch-offset nil
+    :store (if (= first 0xec) (last bytes) nil)
+  }))
+
 (defn make-extended-form [bytes]
   (let [
     [first second third & rest] bytes
@@ -133,11 +151,12 @@
     :branch-offset nil
     :store (last bytes)
   }))
- 
+
 (defn decode [bytes] 
   (let [[first second third fourth fifth sixth] bytes]
     (cond
       (= first 0xbe) (make-extended-form bytes)
+      (or (= first 0xec) (= first 0xfa)) (make-variable-form-special bytes)
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xff) (make-variable-form bytes))))

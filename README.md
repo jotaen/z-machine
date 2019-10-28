@@ -7,4 +7,3 @@
 ## Todos
 
 - Support `branch-offset`
-- Special opcodes `call_vs2` and `call_vn2`
