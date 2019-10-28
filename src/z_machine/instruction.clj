@@ -103,8 +103,6 @@
     :store nil}))
 
 (defn make-variable-form [bytes]
-  (defn count-bytes-for-operands [ts]
-    (reduce (fn [a t] (+ a (if (= t :type-large-constant) 2 1))) 0 ts))
   (let [
     [first second & rest] bytes
     operand-types (decode-operand-types [second])
@@ -118,7 +116,7 @@
     :operand-count operand-count
     :operands operands
     :branch-offset nil
-    :store (nth rest (count-bytes-for-operands operand-types))
+    :store (last bytes)
   }))
 
 (defn make-extended-form [bytes]
