@@ -1,25 +1,6 @@
-(ns z-machine.instruction)
-
-(defn instruction-names [byte]
-  ; list incomplete, variants with offsets still missing
-  (case byte
-    (0x04 0x24 0x44 0x64) :dec_chk
-    (0x05 0x25 0x45 0x65) :inc_chk
-    (0x80 0x90 0xa0) :jz
-    (0xb5) :save
-    (0xd6) :mul
-    (0xd5) :sub
-    (0xe0) :call
-    (0xec) :call_vs2
-    (0xfa) :call_vn2
-  ))
-
-(defn instruction-names-extended [byte]
-  (case byte
-    (0x02) :log_shift
-    (0x04) :set_font
-    (0x09) :save_undo
-  ))
+(ns z-machine.instruction
+  (:require [z-machine.opcode-names :refer :all])
+)
 
 (defn decode-operand-types [bytes]
   (defn optype [val]
