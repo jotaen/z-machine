@@ -8,5 +8,6 @@
 
 - Support `branch-offset`
 - Support `text-to-print`
-- Double-check that `store` works in all forms (Damien)
+- Properly support `store` in all forms
+- Add bytes consumed to result data structure
 - Integration tests: disassemble (see examples in spec)
