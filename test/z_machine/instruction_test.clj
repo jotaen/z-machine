@@ -335,6 +335,26 @@
       :store 0x09
       })))
 
+(deftest operand-byte-counter
+  (testing "different operands"
+    (is (= (count-operand-bytes []) 0))
+    (is (= (count-operand-bytes [
+        [:type-small-constant 0xae]
+        [:type-variable 0x8c]
+      ]) 2))
+    (is (= (count-operand-bytes [
+        [:type-large-constant 0x10 0xd2]
+      ]) 2))
+    (is (= (count-operand-bytes [
+        [:type-small-constant 0xc1]
+        [:type-small-constant 0x03]
+        [:type-variable 0x45]
+        [:type-large-constant 0xe3 0x6f]
+        [:type-variable 0x0e]
+        [:type-large-constant 0x22 0xf8]
+        [:type-variable 0x9a]
+      ]) 9))))
+
 (deftest operand-type-decoder
   (testing "single byte"
     (is (= (decode-operand-types [0x2f]) [:type-large-constant :type-variable]))

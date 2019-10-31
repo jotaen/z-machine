@@ -140,3 +140,9 @@
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xff) (make-variable-form bytes))))
+
+(defn count-operand-bytes [operands]
+  (->> operands
+    (map first)
+    (map (fn [type] (if (= type :type-large-constant) 2 1)))
+    (reduce +)))
