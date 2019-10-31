@@ -51,7 +51,7 @@
     (0x8c 0x9c 0xac) { :name :jump }
     (0x8d 0x9d 0xad) { :name :print_paddr }
     (0x8e 0x9e 0xae) { :name :load :store true }
-    (0x8f 0x9f 0xaf) { :name :not :store true }
+    (0x8f 0x9f 0xaf) { :name :call_1n }
 
     ; 0OP, all short
     (0xb0) { :name :rtrue }
@@ -59,24 +59,21 @@
     (0xb2) { :name :print }
     (0xb3) { :name :print_ret }
     (0xb4) { :name :nop }
-    (0xb5) { :name :save :branch true }
-    (0xb6) { :name :restore :branch true }
     (0xb7) { :name :restart }
     (0xb8) { :name :ret_popped }
-    (0xb9) { :name :pop :store true }
+    (0xb9) { :name :catch :store true }
     (0xba) { :name :quit }
     (0xbb) { :name :new_line }
-    (0xbc) { :name :show_status }
     (0xbd) { :name :verify :branch true }
     (0xbe) { :name :extended }
     (0xbf) { :name :piracy :branch true }
 
     ; VAR
-    (0xe0) { :name :call :store true }
+    (0xe0) { :name :call_vs }
     (0xe1) { :name :storew }
     (0xe2) { :name :storeb }
     (0xe3) { :name :put_prop }
-    (0xe4) { :name :sread :store true }
+    (0xe4) { :name :aread :store true }
     (0xe5) { :name :print_char }
     (0xe6) { :name :print_num }
     (0xe7) { :name :random :store true }
