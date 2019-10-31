@@ -56,8 +56,8 @@
     ; 0OP, all short
     (0xb0) { :name :rtrue }
     (0xb1) { :name :rfalse }
-    (0xb2) { :name :print }
-    (0xb3) { :name :print_ret }
+    (0xb2) { :name :print :text_to_print true }
+    (0xb3) { :name :print_ret :text_to_print true }
     (0xb4) { :name :nop }
     (0xb7) { :name :restart }
     (0xb8) { :name :ret_popped }

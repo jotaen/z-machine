@@ -19,7 +19,7 @@
   :jz-V [0xa0 0x65 0xd3]
 
   ; SHORT FORM, 0OP
-  :save [0xb5 0xd8]
+  :verify [0xbd 0xd8]
 
   ; VAR FORM, 2OP 
   :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
@@ -28,8 +28,8 @@
   :mul-LL [0xd6 0x0f 0x03 0x04 0x05 0x06 0x00]
 
   ; VAR FORM, VAROP
-  :call [0xe0 0xff 0x01]
-  :call-LLL [0xe0 0x03 0x01 0x02 0x03 0x04 0x05 0x06 0x09]
+  :call_vs [0xe0 0xff 0x01]
+  :call_vs-LLL [0xe0 0x03 0x01 0x02 0x03 0x04 0x05 0x06 0x09]
   :call_vs2 [0xec 0x58 0x8b 0xc1 0x03 0x45 0xe3 0x6f 0x0e 0x22 0xf8 0x9a 0x02]
   :call_vn2 [0xfa 0x8b 0xff 0x45 0xe3 0x6f 0x0e]
   
@@ -184,10 +184,10 @@
       })))
 
   (testing "range 0xb0 to 0xbf"
-    (is (= (decode (:save instructions)) {
-        :name :save
+    (is (= (decode (:verify instructions)) {
+        :name :verify
         :form :form-short
-        :opcode 0xb5
+        :opcode 0xbd
         :operand-count :0OP
         :operands []
         :branch-offset [0xd8]
@@ -246,8 +246,8 @@
       })))
 
   (testing "range 0xe0 to 0xff"
-    (is (= (decode (:call instructions)) {
-      :name :call
+    (is (= (decode (:call_vs instructions)) {
+      :name :call_vs
       :form :form-variable
       :opcode 0xe0
       :operand-count :VAR
@@ -255,8 +255,8 @@
       :branch-offset nil
       :store 0x01
       }))
-    (is (= (decode (:call-LLL instructions)) {
-      :name :call
+    (is (= (decode (:call_vs-LLL instructions)) {
+      :name :call_vs
       :form :form-variable
       :opcode 0xe0
       :operand-count :VAR
