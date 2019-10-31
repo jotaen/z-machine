@@ -37,9 +37,22 @@
               (conj result [:type-variable (first bytes)]))))))
     (iter operand-types bytes []))
 
+(defn parse-tail [instruction bytes]
+  (def parsers [
+    [:store (fn [bs] [(first bs) (rest bs)])]
+    [:branch (fn [bs] [[(first bs)] (rest bs)])]
+  ])
+  (defn do [[result remainder] [name fn]]
+    (if (get instruction name) (fn remainder) [nil remainder]))
+  (->>
+    (reductions do [[] bytes] parsers)
+    (rest)
+    (map first)))
+
 (defn make-long-form [bytes]
   (let [
-    [first second third fourth] bytes
+    [first second third & tail] bytes
+    instruction (instruction-table first)
     operands (cond
       (< first 0x20) [
         [:type-small-constant second]
@@ -52,15 +65,16 @@
         [:type-small-constant third]]
       :else [
           [:type-variable second]
-          [:type-variable third]])]
+          [:type-variable third]])
+    [store branch-offset] (parse-tail instruction tail)]
   {
-    :name (:name (instruction-table first))
+    :name (:name instruction)
     :form :form-long
     :opcode first
     :operand-count :2OP
     :operands operands
-    :branch-offset [fourth]
-    :store nil}))
+    :branch-offset branch-offset
+    :store store}))
 
 (defn make-short-form [bytes]
   (let [

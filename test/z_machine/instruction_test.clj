@@ -6,6 +6,7 @@
   ; LONG FORM, 2OP
   :inc_chk-SS [0x05 0x02 0x00 0xd4]
   :dec_chk-SS [0x04 0x12 0xab 0xd5]
+  :and-SS [0x09 0x01 0x00 0x11]
   :inc_chk-SV [0x25 0x02 0x00 0xd4]
   :dec_chk-SV [0x24 0x21 0x1e 0xd6]
   :inc_chk-VS [0x45 0x00 0x02 0xd6]
@@ -64,6 +65,18 @@
         ]
         :branch-offset [0xd5]
         :store nil
+      }))
+    (is (= (decode (:and-SS instructions)) {
+        :name :and
+        :form :form-long
+        :opcode 0x09
+        :operand-count :2OP
+        :operands [
+          [:type-small-constant 0x01]
+          [:type-small-constant 0x00]
+        ]
+        :branch-offset nil
+        :store 0x11
       })))
 
   (testing "range 0x20 to 0x3f"
