@@ -1,5 +1,5 @@
 (ns z-machine.instruction
-  (:require [z-machine.opcode-names :refer :all]))
+  (:require [z-machine.instruction-table :refer :all]))
 
 (defn decode-operand-types [bytes]
   (defn optype [val]
@@ -54,7 +54,7 @@
           [:type-variable second]
           [:type-variable third]])]
   {
-    :name (instruction-names first)
+    :name (:name (instruction-table first))
     :form :form-long
     :opcode first
     :operand-count :2OP
@@ -76,7 +76,7 @@
       (<= first 0xaf) [third]
       (<= first 0xbf) [second])]
   {
-    :name (instruction-names first)
+    :name (:name (instruction-table first))
     :form :form-short
     :opcode first
     :operand-count operand-count
@@ -92,7 +92,7 @@
     operand-count (if (<= first 0xdf) :2OP :VAR)
   ]
   {
-    :name (instruction-names first)
+    :name (:name (instruction-table first))
     :form :form-variable
     :opcode first
     :operand-count operand-count
@@ -108,7 +108,7 @@
     operands (extract-operands operand-types rest)
   ]
   {
-    :name (instruction-names first)
+    :name (:name (instruction-table first))
     :form :form-variable
     :opcode first
     :operand-count :VAR
@@ -123,7 +123,7 @@
     operand-types (decode-operand-types [third])
     operands (extract-operands operand-types rest)
   ] {
-    :name (instruction-names-extended second)
+    :name (:name (instruction-table-extended second))
     :form :form-extended
     :opcode second
     :operand-count :VAR
