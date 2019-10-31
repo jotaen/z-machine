@@ -1,6 +1,5 @@
 (ns z-machine.instruction
-  (:require [z-machine.opcode-names :refer :all])
-)
+  (:require [z-machine.opcode-names :refer :all]))
 
 (defn decode-operand-types [bytes]
   (defn optype [val]
