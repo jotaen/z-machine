@@ -102,6 +102,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :byte-count (+ 3 (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
 (defn make-short-form [bytes]
@@ -124,6 +125,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :byte-count (+ 1 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
 (defn make-variable-form [bytes]
@@ -144,6 +146,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :byte-count (+ 2 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
 (defn make-variable-form-special [bytes]
@@ -152,6 +155,7 @@
     instruction (instruction-table first)
     operand-types (concat (decode-operand-types [second]) (decode-operand-types [third]))
     operands (extract-operands operand-types rest)
+    store (if (= first 0xec) (last bytes) nil)
   ]
   {
     :name (:name instruction)
@@ -159,8 +163,9 @@
     :opcode first
     :operand-count :VAR
     :operands operands
-    :store (if (= first 0xec) (last bytes) nil)
+    :store store
     :branch-offset nil
+    :byte-count (+ 3 (count-operand-bytes operands) (if store 1 0))
   }))
 
 (defn make-extended-form [bytes]
@@ -179,6 +184,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :byte-count (+ 3 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
 (defn decode [bytes] 

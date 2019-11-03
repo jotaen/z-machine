@@ -63,6 +63,7 @@
         ]
         :store nil
         :branch-offset [false [0x03 0x69]]
+        :byte-count 5
       }))
     (is (= (decode (:dec_chk-SS instructions)) {
         :name :dec_chk
@@ -75,6 +76,7 @@
         ]
         :store nil
         :branch-offset [true [0x34 0x72]]
+        :byte-count 5
       }))
     (is (= (decode (:and-SS instructions)) {
         :name :and
@@ -87,6 +89,7 @@
         ]
         :store 0x11
         :branch-offset nil
+        :byte-count 4
       }))
     (is (= (decode (:insert_obj-SS instructions)) {
         :name :insert_obj
@@ -99,6 +102,7 @@
         ]
         :store nil
         :branch-offset nil
+        :byte-count 3
       })))
 
   (testing "range 0x20 to 0x3f"
@@ -113,6 +117,7 @@
         ]
         :store nil
         :branch-offset [true [0x14]]
+        :byte-count 4
       }))
     (is (= (decode (:dec_chk-SV instructions)) {
         :name :dec_chk
@@ -125,6 +130,7 @@
         ]
         :store nil
         :branch-offset [true [0x16]]
+        :byte-count 4
       })))
 
   (testing "range 0x40 to 0x5f"
@@ -139,6 +145,7 @@
         ]
         :store nil
         :branch-offset [true [0x16]]
+        :byte-count 4
       }))
     (is (= (decode (:dec_chk-VS instructions)) {
         :name :dec_chk
@@ -151,6 +158,7 @@
         ]
         :store nil
         :branch-offset [true [0x00]]
+        :byte-count 4
       })))
 
   (testing "range 0x60 to 0x7f"
@@ -165,6 +173,7 @@
         ]
         :store nil
         :branch-offset [true [0x15]]
+        :byte-count 4
       }))
     (is (= (decode (:dec_chk-VV instructions)) {
         :name :dec_chk
@@ -177,6 +186,7 @@
         ]
         :store nil
         :branch-offset [true [0x17]]
+        :byte-count 4
       })))
 
   (testing "range 0x80 to 0x8f"
@@ -190,6 +200,7 @@
         ]
         :store nil
         :branch-offset [true [0x13]]
+        :byte-count 4
       }))
     (is (= (decode (:get_sibling-L instructions)) {
         :name :get_sibling
@@ -201,6 +212,7 @@
         ]
         :store 0x64
         :branch-offset [false [0x02 0xfe]]
+        :byte-count 6
       })))
 
   (testing "range 0x90 to 0x9f"
@@ -214,6 +226,7 @@
         ]
         :store nil
         :branch-offset [false [0x3f]]
+        :byte-count 3
       }))
     (is (= (decode (:call_1s-S instructions)) {
         :name :call_1s
@@ -225,6 +238,7 @@
         ]
         :store 0xe7
         :branch-offset nil
+        :byte-count 3
       })))
 
   (testing "range 0xa0 to 0xaf"
@@ -238,6 +252,7 @@
         ]
         :store nil
         :branch-offset [true [0x13]]
+        :byte-count 3
       }))
     (is (= (decode (:ret-V instructions)) {
         :name :ret
@@ -249,6 +264,7 @@
         ]
         :store nil
         :branch-offset nil
+        :byte-count 2
       })))
 
   (testing "range 0xb0 to 0xbf"
@@ -260,6 +276,7 @@
         :operands []
         :store nil
         :branch-offset [true [0x18]]
+        :byte-count 2
       })))
 
   (testing "range 0xc0 to 0xdf"
@@ -274,6 +291,7 @@
         ]
         :store 0x00
         :branch-offset nil
+        :byte-count 6
       }))
     (is (= (decode (:mul-LL instructions)) {
         :name :mul
@@ -286,6 +304,7 @@
         ]
         :store 0x00
         :branch-offset nil
+        :byte-count 7
       }))
     (is (= (decode (:test_attr-LS instructions)) {
         :name :test_attr
@@ -298,6 +317,7 @@
         ]
         :store nil
         :branch-offset [false [0x04 0x32]]
+        :byte-count 7
       }))
     (is (= (decode (:insert_obj-VL instructions)) {
         :name :insert_obj
@@ -310,6 +330,7 @@
         ]
         :store nil
         :branch-offset nil
+        :byte-count 5
       }))
     (is (= (decode (:sub-LV instructions)) {
         :name :sub
@@ -322,6 +343,7 @@
         ]
         :store 0x01
         :branch-offset nil
+        :byte-count 6
       }))
 
     (is (= (decode (:mul-VL instructions)) {
@@ -335,6 +357,7 @@
         ]
         :store 0x00
         :branch-offset nil
+        :byte-count 6
       })))
 
   (testing "range 0xe0 to 0xff"
@@ -346,6 +369,7 @@
       :operands []
       :store nil
       :branch-offset nil
+      :byte-count 2
       }))
     (is (= (decode (:call_vs-LLL instructions)) {
       :name :call_vs
@@ -359,6 +383,7 @@
       ]
       :store nil
       :branch-offset nil
+      :byte-count 8
       }))
     (is (= (decode (:scan_table instructions)) {
       :name :scan_table
@@ -368,6 +393,7 @@
       :operands []
       :store 0x01
       :branch-offset [true [0x33]]
+      :byte-count 4
       })))
 
   (testing "special cases: 2-byte operand types"
@@ -387,6 +413,7 @@
       ]
       :store 0x02
       :branch-offset nil
+      :byte-count 13
     }))
     (is (= (decode (:call_vn2 instructions)) {
       :name :call_vn2
@@ -400,6 +427,7 @@
       ]
       :store nil
       :branch-offset nil
+      :byte-count 7
     })))
 
   (testing "range 0xbe"
@@ -413,6 +441,7 @@
       ]
       :store 0x08
       :branch-offset nil
+      :byte-count 6
       }))
     (is (= (decode (:save_undo instructions)) {
       :name :save_undo
@@ -422,6 +451,7 @@
       :operands []
       :store 0x04
       :branch-offset nil
+      :byte-count 4
       }))
     (is (= (decode (:push_stack instructions)) {
       :name :push_stack
@@ -431,6 +461,7 @@
       :operands []
       :store nil
       :branch-offset [false [0x06 0x5e]]
+      :byte-count 5
       }))
     (is (= (decode (:check_unicode-LSLV instructions)) {
       :name :check_unicode
@@ -445,6 +476,7 @@
       ]
       :store nil
       :branch-offset nil
+      :byte-count 9
       }))
     (is (= (decode (:log_shift-SV instructions)) {
       :name :log_shift
@@ -457,6 +489,7 @@
       ]
       :store 0x09
       :branch-offset nil
+      :byte-count 6
       })))
 
 (deftest operand-byte-counter
