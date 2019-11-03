@@ -504,4 +504,10 @@
   (testing "branch-offset with two bytes"
     (is (= (decode-branch [0xaa 0x29]) [true [0x2a 0x29]]))
     (is (= (decode-branch [0x3a 0x5f]) [false [0x3a 0x5f]]))
-    )))
+    ))
+
+(deftest text2print-bytes-counter
+  (testing "text to print with one word"
+    (is (= (count-text2print-bytes [0xa4 0x37]) 2))
+    (is (= (count-text2print-bytes [0x00 0x00 0xa4 0x37]) 4))
+    (is (= (count-text2print-bytes [0x07 0x08 0x35 0x00 0xa4 0x37]) 6)))))

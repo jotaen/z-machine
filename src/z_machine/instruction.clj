@@ -69,6 +69,13 @@
 (defn get-tail [bytes-till-operands operands bytes]
   (drop (+ bytes-till-operands (count-operand-bytes operands)) bytes))
 
+(defn count-text2print-bytes [bytes]
+  (let [
+    [first second & rest] bytes
+    top-bit (bit-and (bit-shift-right first 7) 2r1)
+    is-last (= top-bit 2r1)]
+    (if is-last 2 (+ 2 (count-text2print-bytes rest)))))
+
 (defn make-long-form [bytes]
   (let [
     [first second third & tail] bytes
