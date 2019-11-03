@@ -55,6 +55,9 @@
     (map (fn [type] (if (= type :type-large-constant) 2 1)))
     (reduce +)))
 
+(defn get-tail [bytes-till-operands operands bytes]
+  (drop (+ bytes-till-operands (count-operand-bytes operands)) bytes))
+
 (defn make-long-form [bytes]
   (let [
     [first second third & tail] bytes
@@ -84,7 +87,6 @@
   }))
 
 (defn make-short-form [bytes]
-  (def bytes-till-operands 1)
   (let [
     [first second third fourth] bytes
     instruction (instruction-table first)
@@ -94,7 +96,7 @@
       (<= first 0x9f) [[:type-small-constant second]]
       (<= first 0xaf) [[:type-variable second]]
       (<= first 0xbf) [])
-    tail (drop (+ bytes-till-operands (count-operand-bytes operands)) bytes)
+    tail (get-tail 1 operands bytes)
     [store branch-offset] (parse-tail instruction tail)]
   {
     :name (:name (instruction-table first))
@@ -107,14 +109,13 @@
   }))
 
 (defn make-variable-form [bytes]
-  (def bytes-till-operands 2)
   (let [
     [first second & rest] bytes
     instruction (instruction-table first)
     operand-types (decode-operand-types [second])
     operands (extract-operands operand-types rest)
     operand-count (if (<= first 0xdf) :2OP :VAR)
-    tail (drop (+ bytes-till-operands (count-operand-bytes operands)) bytes)
+    tail (get-tail 2 operands bytes)
     [store branch-offset] (parse-tail instruction tail)
   ]
   {
