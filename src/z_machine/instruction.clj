@@ -79,8 +79,9 @@
     :opcode first
     :operand-count :2OP
     :operands operands
+    :store store
     :branch-offset branch-offset
-    :store store}))
+  }))
 
 (defn make-short-form [bytes]
   (def bytes-till-operands 1)
@@ -101,8 +102,9 @@
     :opcode first
     :operand-count operand-count
     :operands operands
+    :store store
     :branch-offset branch-offset
-    :store store}))
+  }))
 
 (defn make-variable-form [bytes]
   (let [
@@ -117,8 +119,8 @@
     :opcode first
     :operand-count operand-count
     :operands operands
-    :branch-offset nil
     :store (last bytes)
+    :branch-offset nil
   }))
 
 (defn make-variable-form-special [bytes]
@@ -133,8 +135,8 @@
     :opcode first
     :operand-count :VAR
     :operands operands
-    :branch-offset nil
     :store (if (= first 0xec) (last bytes) nil)
+    :branch-offset nil
   }))
 
 (defn make-extended-form [bytes]
@@ -148,8 +150,8 @@
     :opcode second
     :operand-count :VAR
     :operands operands
-    :branch-offset nil
     :store (last bytes)
+    :branch-offset nil
   }))
 
 (defn decode [bytes] 

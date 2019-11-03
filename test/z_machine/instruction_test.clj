@@ -4,16 +4,16 @@
 
 (def instructions {
   ; LONG FORM, 2OP
-  :inc_chk-SS [0x05 0x02 0x00 0xd4]
   :dec_chk-SS [0x04 0x12 0xab 0xd5]
+  :inc_chk-SS [0x05 0x02 0x00 0xd4]
   :and-SS [0x09 0x01 0x00 0x11]
   :insert_obj-SS [0x0e 0x54 0xdc]
-  :inc_chk-SV [0x25 0x02 0x00 0xd4]
   :dec_chk-SV [0x24 0x21 0x1e 0xd6]
-  :inc_chk-VS [0x45 0x00 0x02 0xd6]
+  :inc_chk-SV [0x25 0x02 0x00 0xd4]
   :dec_chk-VS [0x44 0x1e 0x21 0xd4]
-  :inc_chk-VV [0x65 0x10 0x32 0xd5]
+  :inc_chk-VS [0x45 0x00 0x02 0xd6]
   :dec_chk-VV [0x64 0x32 0x10 0xd7]
+  :inc_chk-VV [0x65 0x10 0x32 0xd5]
 
   ; SHORT FORM, 1OP
   :jz-L [0x80 0xdd 0x23 0xd3]
@@ -27,8 +27,8 @@
   :verify [0xbd 0xd8]
 
   ; VAR FORM, 2OP 
-  :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
   :sub-LV [0xd5 0x2f 0x04 0xe9 0x03 0x01]
+  :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
   :mul-VL [0xd6 0x8f 0x01 0x02 0x03 0x00]
   :mul-LL [0xd6 0x0f 0x03 0x04 0x05 0x06 0x00]
 
@@ -39,9 +39,9 @@
   :call_vn2 [0xfa 0x8b 0xff 0x45 0xe3 0x6f 0x0e]
   
   ; EXTENDED FORM
+  :log_shift [0xbe 0x02 0x6f 0xae 0x8c 0x09]
   :set_font [0xbe 0x04 0x3f 0x10 0xd2 0x08]
   :save_undo [0xbe 0x09 0xff 0x04]
-  :log_shift [0xbe 0x02 0x6f 0xae 0x8c 0x09]
 })
 
 (deftest instruction-decoder
@@ -55,8 +55,8 @@
           [:type-small-constant 0x02]
           [:type-small-constant 0x00]
         ]
-        :branch-offset [0xd4]
         :store nil
+        :branch-offset [0xd4]
       }))
     (is (= (decode (:dec_chk-SS instructions)) {
         :name :dec_chk
@@ -67,8 +67,8 @@
           [:type-small-constant 0x12]
           [:type-small-constant 0xab]
         ]
-        :branch-offset [0xd5]
         :store nil
+        :branch-offset [0xd5]
       }))
     (is (= (decode (:and-SS instructions)) {
         :name :and
@@ -79,8 +79,8 @@
           [:type-small-constant 0x01]
           [:type-small-constant 0x00]
         ]
-        :branch-offset nil
         :store 0x11
+        :branch-offset nil
       }))
     (is (= (decode (:insert_obj-SS instructions)) {
         :name :insert_obj
@@ -91,8 +91,8 @@
           [:type-small-constant 0x54]
           [:type-small-constant 0xdc]
         ]
-        :branch-offset nil
         :store nil
+        :branch-offset nil
       })))
 
   (testing "range 0x20 to 0x3f"
@@ -105,8 +105,8 @@
           [:type-small-constant 0x02]
           [:type-variable 0x00]
         ]
-        :branch-offset [0xd4]
         :store nil
+        :branch-offset [0xd4]
       }))
     (is (= (decode (:dec_chk-SV instructions)) {
         :name :dec_chk
@@ -117,8 +117,8 @@
           [:type-small-constant 0x21]
           [:type-variable 0x1e]
         ]
-        :branch-offset [0xd6]
         :store nil
+        :branch-offset [0xd6]
       })))
 
   (testing "range 0x40 to 0x5f"
@@ -131,8 +131,8 @@
           [:type-variable 0x00]
           [:type-small-constant 0x02]
         ]
-        :branch-offset [0xd6]
         :store nil
+        :branch-offset [0xd6]
       }))
     (is (= (decode (:dec_chk-VS instructions)) {
         :name :dec_chk
@@ -143,8 +143,8 @@
           [:type-variable 0x1e]
           [:type-small-constant 0x21]
         ]
-        :branch-offset [0xd4]
         :store nil
+        :branch-offset [0xd4]
       })))
 
   (testing "range 0x60 to 0x7f"
@@ -157,8 +157,8 @@
           [:type-variable 0x10]
           [:type-variable 0x32]
         ]
-        :branch-offset [0xd5]
         :store nil
+        :branch-offset [0xd5]
       }))
     (is (= (decode (:dec_chk-VV instructions)) {
         :name :dec_chk
@@ -169,8 +169,8 @@
           [:type-variable 0x32]
           [:type-variable 0x10]
         ]
-        :branch-offset [0xd7]
         :store nil
+        :branch-offset [0xd7]
       })))
 
   (testing "range 0x80 to 0x8f"
@@ -182,8 +182,8 @@
         :operands [
           [:type-large-constant 0xdd 0x23]
         ]
-        :branch-offset [0xd3]
         :store nil
+        :branch-offset [0xd3]
       }))
     (is (= (decode (:get_sibling-L instructions)) {
         :name :get_sibling
@@ -193,8 +193,8 @@
         :operands [
           [:type-large-constant 0xbe 0x73]
         ]
-        :branch-offset [0x02]
         :store 0x64
+        :branch-offset [0x02]
       })))
 
   (testing "range 0x90 to 0x9f"
@@ -206,8 +206,8 @@
         :operands [
           [:type-small-constant 0x1a]
         ]
-        :branch-offset [0xd3]
         :store nil
+        :branch-offset [0xd3]
       }))
     (is (= (decode (:call_1s-S instructions)) {
         :name :call_1s
@@ -217,8 +217,8 @@
         :operands [
           [:type-small-constant 0xa2]
         ]
-        :branch-offset nil
         :store 0xe7
+        :branch-offset nil
       })))
 
   (testing "range 0xa0 to 0xaf"
@@ -230,8 +230,8 @@
         :operands [
           [:type-variable 0x65]
         ]
-        :branch-offset [0xd3]
         :store nil
+        :branch-offset [0xd3]
       }))
     (is (= (decode (:ret-V instructions)) {
         :name :ret
@@ -241,8 +241,8 @@
         :operands [
           [:type-variable 0x77]
         ]
-        :branch-offset nil
         :store nil
+        :branch-offset nil
       })))
 
   (testing "range 0xb0 to 0xbf"
@@ -252,8 +252,8 @@
         :opcode 0xbd
         :operand-count :0OP
         :operands []
-        :branch-offset [0xd8]
         :store nil
+        :branch-offset [0xd8]
       })))
 
   (testing "range 0xc0 to 0xdf"
@@ -266,8 +266,8 @@
           [:type-large-constant 0x03 0xe8]
           [:type-variable 0x02]
         ]
-        :branch-offset nil
         :store 0x00
+        :branch-offset nil
       }))
     (is (= (decode (:mul-LL instructions)) {
         :name :mul
@@ -278,8 +278,8 @@
           [:type-large-constant 0x03 0x04]
           [:type-large-constant 0x05 0x06]
         ]
-        :branch-offset nil
         :store 0x00
+        :branch-offset nil
       }))
     (is (= (decode (:sub-LV instructions)) {
         :name :sub
@@ -290,8 +290,8 @@
           [:type-large-constant 0x04 0xe9]
           [:type-variable 0x03]
         ]
-        :branch-offset nil
         :store 0x01
+        :branch-offset nil
       }))
 
     (is (= (decode (:mul-VL instructions)) {
@@ -303,8 +303,8 @@
           [:type-variable 0x01]
           [:type-large-constant 0x02 0x03]
         ]
-        :branch-offset nil
         :store 0x00
+        :branch-offset nil
       })))
 
   (testing "range 0xe0 to 0xff"
@@ -314,8 +314,8 @@
       :opcode 0xe0
       :operand-count :VAR
       :operands []
-      :branch-offset nil
       :store 0x01
+      :branch-offset nil
       }))
     (is (= (decode (:call_vs-LLL instructions)) {
       :name :call_vs
@@ -327,8 +327,8 @@
         [:type-large-constant 0x03 0x04]
         [:type-large-constant 0x05 0x06]
       ]
-      :branch-offset nil
       :store 0x09
+      :branch-offset nil
       })))
 
   (testing "special cases: 2-byte operand types"
@@ -346,8 +346,8 @@
         [:type-large-constant 0x22 0xf8]
         [:type-variable 0x9a]
       ]
-      :branch-offset nil
       :store 0x02
+      :branch-offset nil
     }))
     (is (= (decode (:call_vn2 instructions)) {
       :name :call_vn2
@@ -359,8 +359,8 @@
         [:type-large-constant 0xe3 0x6f]
         [:type-variable 0x0e]
       ]
-      :branch-offset nil
       :store nil
+      :branch-offset nil
     })))
 
   (testing "range 0xbe"
@@ -372,8 +372,8 @@
       :operands [
         [:type-large-constant 0x10 0xd2]
       ]
-      :branch-offset nil
       :store 0x08
+      :branch-offset nil
       }))
     (is (= (decode (:save_undo instructions)) {
       :name :save_undo
@@ -381,8 +381,8 @@
       :opcode 0x09
       :operand-count :VAR
       :operands []
-      :branch-offset nil
       :store 0x04
+      :branch-offset nil
       }))
     (is (= (decode (:log_shift instructions)) {
       :name :log_shift
@@ -393,8 +393,8 @@
         [:type-small-constant 0xae]
         [:type-variable 0x8c]
       ]
-      :branch-offset nil
       :store 0x09
+      :branch-offset nil
       })))
 
 (deftest operand-byte-counter
