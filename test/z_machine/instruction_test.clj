@@ -17,8 +17,11 @@
 
   ; SHORT FORM, 1OP
   :jz-L [0x80 0xdd 0x23 0xd3]
+  :get_sibling-L [0x81 0xbe 0x73 0x64 0x02]
   :jz-S [0x90 0x1a 0xd3]
+  :call_1s-S [0x98 0xa2 0xe7]
   :jz-V [0xa0 0x65 0xd3]
+  :ret-V [0xab 0x77]
 
   ; SHORT FORM, 0OP
   :verify [0xbd 0xd8]
@@ -181,6 +184,17 @@
         ]
         :branch-offset [0xd3]
         :store nil
+      }))
+    (is (= (decode (:get_sibling-L instructions)) {
+        :name :get_sibling
+        :form :form-short
+        :opcode 0x81
+        :operand-count :1OP
+        :operands [
+          [:type-large-constant 0xbe 0x73]
+        ]
+        :branch-offset [0x02]
+        :store 0x64
       })))
 
   (testing "range 0x90 to 0x9f"
@@ -194,6 +208,17 @@
         ]
         :branch-offset [0xd3]
         :store nil
+      }))
+    (is (= (decode (:call_1s-S instructions)) {
+        :name :call_1s
+        :form :form-short
+        :opcode 0x98
+        :operand-count :1OP
+        :operands [
+          [:type-small-constant 0xa2]
+        ]
+        :branch-offset nil
+        :store 0xe7
       })))
 
   (testing "range 0xa0 to 0xaf"
@@ -206,6 +231,17 @@
           [:type-variable 0x65]
         ]
         :branch-offset [0xd3]
+        :store nil
+      }))
+    (is (= (decode (:ret-V instructions)) {
+        :name :ret
+        :form :form-short
+        :opcode 0xab
+        :operand-count :1OP
+        :operands [
+          [:type-variable 0x77]
+        ]
+        :branch-offset nil
         :store nil
       })))
 

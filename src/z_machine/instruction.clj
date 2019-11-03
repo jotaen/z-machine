@@ -49,6 +49,12 @@
     (rest)
     (map first)))
 
+(defn count-operand-bytes [operands]
+  (->> operands
+    (map first)
+    (map (fn [type] (if (= type :type-large-constant) 2 1)))
+    (reduce +)))
+
 (defn make-long-form [bytes]
   (let [
     [first second third & tail] bytes
@@ -77,18 +83,18 @@
     :store store}))
 
 (defn make-short-form [bytes]
+  (def bytes-till-operands 1)
   (let [
     [first second third fourth] bytes
+    instruction (instruction-table first)
     operand-count (if (<= first 0xaf) :1OP :0OP)
     operands (cond
       (<= first 0x8f) [[:type-large-constant second third]]
       (<= first 0x9f) [[:type-small-constant second]]
       (<= first 0xaf) [[:type-variable second]]
       (<= first 0xbf) [])
-    branch-offset (cond
-      (<= first 0x8f) [fourth]
-      (<= first 0xaf) [third]
-      (<= first 0xbf) [second])]
+    tail (drop (+ bytes-till-operands (count-operand-bytes operands)) bytes)
+    [store branch-offset] (parse-tail instruction tail)]
   {
     :name (:name (instruction-table first))
     :form :form-short
@@ -96,7 +102,7 @@
     :operand-count operand-count
     :operands operands
     :branch-offset branch-offset
-    :store nil}))
+    :store store}))
 
 (defn make-variable-form [bytes]
   (let [
@@ -154,9 +160,3 @@
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xff) (make-variable-form bytes))))
-
-(defn count-operand-bytes [operands]
-  (->> operands
-    (map first)
-    (map (fn [type] (if (= type :type-large-constant) 2 1)))
-    (reduce +)))
