@@ -47,6 +47,7 @@
   :set_font-L [0xbe 0x04 0x3f 0x10 0xd2 0x08]
   :save_undo [0xbe 0x09 0xff 0x04]
   :push_stack [0xbe 0x18 0xff 0x06]
+  :check_unicode-LSLV [0xbe 0x0c 0x12 0x72 0x8a 0x7c 0x11 0x00 0x74]
 })
 
 (deftest instruction-decoder
@@ -430,6 +431,20 @@
       :operands []
       :store nil
       :branch-offset [0x06]
+      }))
+    (is (= (decode (:check_unicode-LSLV instructions)) {
+      :name :check_unicode
+      :form :form-extended
+      :opcode 0x0c
+      :operand-count :VAR
+      :operands [
+        [:type-large-constant 0x72 0x8a]
+        [:type-small-constant 0x7c]
+        [:type-large-constant 0x11 0x00]
+        [:type-variable 0x74]
+      ]
+      :store nil
+      :branch-offset nil
       }))
     (is (= (decode (:log_shift-SV instructions)) {
       :name :log_shift
