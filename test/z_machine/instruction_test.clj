@@ -565,4 +565,14 @@
   (testing "text to print with one word"
     (is (= (count-text2print-bytes [0xa4 0x37]) 2))
     (is (= (count-text2print-bytes [0x00 0x00 0xa4 0x37]) 4))
-    (is (= (count-text2print-bytes [0x07 0x08 0x35 0x00 0xa4 0x37]) 6)))))
+    (is (= (count-text2print-bytes [0x07 0x08 0x35 0x00 0xa4 0x37]) 6))))
+
+(deftest integration-test
+  (def example-sequence [0x05 0x02 0x00 0xd4 0xb2 0x11 0xaa 0x46 0x34 0x16 0x45 0x9c 0xa5 0xd6 0x2f 0x03 0xe8 0x02 0x00 0x8f 0x01 0x56])
+  (testing "example sequence from z-machine spec"
+    (is (= (decode-all example-sequence) [
+      {:name :inc_chk :form :form-long :opcode 5 :operand-count :2OP :operands [[:type-small-constant 2] [:type-small-constant 0]] :store nil :branch-offset [true [20]] :byte-count 4}
+      {:name :print :form :form-short :opcode 178 :operand-count :0OP :operands [] :store nil :branch-offset nil :byte-count 9}
+      {:name :mul :form :form-variable :opcode 214 :operand-count :2OP :operands [[:type-large-constant 3 232] [:type-variable 2]] :store 0 :branch-offset nil :byte-count 6}
+      {:name :call_1n :form :form-short :opcode 143 :operand-count :1OP :operands [[:type-large-constant 1 86]] :store nil :branch-offset nil :byte-count 3}
+    ])))))

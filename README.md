@@ -7,4 +7,3 @@
 ## Todos
 
 - Support `text-to-print` with proper string decoding
-- Integration tests: disassemble (see examples in spec)

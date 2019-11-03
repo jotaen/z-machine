@@ -197,3 +197,13 @@
       (<= first 0x7f) (make-long-form bytes)
       (<= first 0xbf) (make-short-form bytes)
       (<= first 0xff) (make-variable-form bytes))))
+
+(defn decode-all [bytes]
+  (if (empty? bytes)
+    []
+    (let [
+      instruction (decode bytes)
+      next-bytes (drop (:byte-count instruction) bytes)
+    ]
+    (concat [instruction] (decode-all next-bytes)))
+  ))
