@@ -6,8 +6,8 @@
 
 ## Todos
 
-- Support `branch-offset`
-- Support `text-to-print`
-- Properly support `store` in all forms
+- Support `branch-offset` with multiple bytes too
+- Basic support `text-to-print`
+- Support `text-to-print` with proper string decoding
 - Add bytes consumed to result data structure
 - Integration tests: disassemble (see examples in spec)
