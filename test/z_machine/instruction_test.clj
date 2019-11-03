@@ -614,7 +614,7 @@
   (testing "example sequence from z-machine spec"
     (is (= (decode-all example-sequence) [
       {:name :inc_chk :form :form-long :opcode 5 :operand-count :2OP :operands [[:type-small-constant 2] [:type-small-constant 0]] :store nil :branch-offset [true [20]] :text-to-print nil :byte-count 4}
-      {:name :print :form :form-short :opcode 178 :operand-count :0OP :operands [] :store nil :branch-offset nil :text-to-print [11 24 3 26 0 2 0 4 15 0 10 22] :byte-count 9}
+      {:name :print :form :form-short :opcode 178 :operand-count :0OP :operands [] :store nil :branch-offset nil :text-to-print [2r01011 2r11000 2r00011 2r11010 2r00000 2r00010 2r00000 2r00100 2r01111 2r00000 2r01010 2r10110] :byte-count 9}
       {:name :mul :form :form-variable :opcode 214 :operand-count :2OP :operands [[:type-large-constant 3 232] [:type-variable 2]] :store 0 :branch-offset nil :text-to-print nil :byte-count 6}
       {:name :call_1n :form :form-short :opcode 143 :operand-count :1OP :operands [[:type-large-constant 1 86]] :store nil :branch-offset nil :text-to-print nil :byte-count 3}
     ])))))
