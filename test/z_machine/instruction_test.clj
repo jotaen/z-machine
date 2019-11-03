@@ -4,21 +4,21 @@
 
 (def instructions {
   ; LONG FORM, 2OP
-  :dec_chk-SS [0x04 0x12 0xab 0xd5]
-  :inc_chk-SS [0x05 0x02 0x00 0xd4]
+  :dec_chk-SS [0x04 0x12 0xab 0xb4 0x72]
+  :inc_chk-SS [0x05 0x02 0x00 0x03 0x69]
   :and-SS [0x09 0x01 0x00 0x11]
   :insert_obj-SS [0x0e 0x54 0xdc]
   :dec_chk-SV [0x24 0x21 0x1e 0xd6]
   :inc_chk-SV [0x25 0x02 0x00 0xd4]
-  :dec_chk-VS [0x44 0x1e 0x21 0xd4]
+  :dec_chk-VS [0x44 0x1e 0x21 0xc0]
   :inc_chk-VS [0x45 0x00 0x02 0xd6]
   :dec_chk-VV [0x64 0x32 0x10 0xd7]
   :inc_chk-VV [0x65 0x10 0x32 0xd5]
 
   ; SHORT FORM, 1OP
   :jz-L [0x80 0xdd 0x23 0xd3]
-  :get_sibling-L [0x81 0xbe 0x73 0x64 0x02]
-  :jz-S [0x90 0x1a 0xd3]
+  :get_sibling-L [0x81 0xbe 0x73 0x64 0x02 0xfe]
+  :jz-S [0x90 0x1a 0x7f]
   :call_1s-S [0x98 0xa2 0xe7]
   :jz-V [0xa0 0x65 0xd3]
   :ret-V [0xab 0x77]
@@ -27,7 +27,7 @@
   :verify [0xbd 0xd8]
 
   ; VAR FORM, 2OP 
-  :test_attr-LS [0xca 0x1f 0x03 0x04 0x01 0x04]
+  :test_attr-LS [0xca 0x1f 0x03 0x04 0x01 0x04 0x32]
   :insert_obj-VL [0xce 0x8f 0xcc 0xa6 0x35]
   :sub-LV [0xd5 0x2f 0x04 0xe9 0x03 0x01]
   :mul-LV [0xd6 0x2f 0x03 0xe8 0x02 0x00]
@@ -37,7 +37,7 @@
   ; VAR FORM, VAROP
   :call_vs [0xe0 0xff]
   :call_vs-LLL [0xe0 0x03 0x01 0x02 0x03 0x04 0x05 0x06]
-  :scan_table [0xf7 0xff 0x01 0x02]
+  :scan_table [0xf7 0xff 0x01 0xf3]
   ; special
   :call_vs2 [0xec 0x58 0x8b 0xc1 0x03 0x45 0xe3 0x6f 0x0e 0x22 0xf8 0x9a 0x02]
   :call_vn2 [0xfa 0x8b 0xff 0x45 0xe3 0x6f 0x0e]
@@ -46,7 +46,7 @@
   :log_shift-SV [0xbe 0x02 0x6f 0xae 0x8c 0x09]
   :set_font-L [0xbe 0x04 0x3f 0x10 0xd2 0x08]
   :save_undo [0xbe 0x09 0xff 0x04]
-  :push_stack [0xbe 0x18 0xff 0x06]
+  :push_stack [0xbe 0x18 0xff 0x06 0x5e]
   :check_unicode-LSLV [0xbe 0x0c 0x12 0x72 0x8a 0x7c 0x11 0x00 0x74]
 })
 
@@ -62,7 +62,7 @@
           [:type-small-constant 0x00]
         ]
         :store nil
-        :branch-offset [0xd4]
+        :branch-offset [false [0x03 0x69]]
       }))
     (is (= (decode (:dec_chk-SS instructions)) {
         :name :dec_chk
@@ -74,7 +74,7 @@
           [:type-small-constant 0xab]
         ]
         :store nil
-        :branch-offset [0xd5]
+        :branch-offset [true [0x34 0x72]]
       }))
     (is (= (decode (:and-SS instructions)) {
         :name :and
@@ -112,7 +112,7 @@
           [:type-variable 0x00]
         ]
         :store nil
-        :branch-offset [0xd4]
+        :branch-offset [true [0x14]]
       }))
     (is (= (decode (:dec_chk-SV instructions)) {
         :name :dec_chk
@@ -124,7 +124,7 @@
           [:type-variable 0x1e]
         ]
         :store nil
-        :branch-offset [0xd6]
+        :branch-offset [true [0x16]]
       })))
 
   (testing "range 0x40 to 0x5f"
@@ -138,7 +138,7 @@
           [:type-small-constant 0x02]
         ]
         :store nil
-        :branch-offset [0xd6]
+        :branch-offset [true [0x16]]
       }))
     (is (= (decode (:dec_chk-VS instructions)) {
         :name :dec_chk
@@ -150,7 +150,7 @@
           [:type-small-constant 0x21]
         ]
         :store nil
-        :branch-offset [0xd4]
+        :branch-offset [true [0x00]]
       })))
 
   (testing "range 0x60 to 0x7f"
@@ -164,7 +164,7 @@
           [:type-variable 0x32]
         ]
         :store nil
-        :branch-offset [0xd5]
+        :branch-offset [true [0x15]]
       }))
     (is (= (decode (:dec_chk-VV instructions)) {
         :name :dec_chk
@@ -176,7 +176,7 @@
           [:type-variable 0x10]
         ]
         :store nil
-        :branch-offset [0xd7]
+        :branch-offset [true [0x17]]
       })))
 
   (testing "range 0x80 to 0x8f"
@@ -189,7 +189,7 @@
           [:type-large-constant 0xdd 0x23]
         ]
         :store nil
-        :branch-offset [0xd3]
+        :branch-offset [true [0x13]]
       }))
     (is (= (decode (:get_sibling-L instructions)) {
         :name :get_sibling
@@ -200,7 +200,7 @@
           [:type-large-constant 0xbe 0x73]
         ]
         :store 0x64
-        :branch-offset [0x02]
+        :branch-offset [false [0x02 0xfe]]
       })))
 
   (testing "range 0x90 to 0x9f"
@@ -213,7 +213,7 @@
           [:type-small-constant 0x1a]
         ]
         :store nil
-        :branch-offset [0xd3]
+        :branch-offset [false [0x3f]]
       }))
     (is (= (decode (:call_1s-S instructions)) {
         :name :call_1s
@@ -237,7 +237,7 @@
           [:type-variable 0x65]
         ]
         :store nil
-        :branch-offset [0xd3]
+        :branch-offset [true [0x13]]
       }))
     (is (= (decode (:ret-V instructions)) {
         :name :ret
@@ -259,7 +259,7 @@
         :operand-count :0OP
         :operands []
         :store nil
-        :branch-offset [0xd8]
+        :branch-offset [true [0x18]]
       })))
 
   (testing "range 0xc0 to 0xdf"
@@ -297,7 +297,7 @@
           [:type-small-constant 0x01]
         ]
         :store nil
-        :branch-offset [0x04]
+        :branch-offset [false [0x04 0x32]]
       }))
     (is (= (decode (:insert_obj-VL instructions)) {
         :name :insert_obj
@@ -367,7 +367,7 @@
       :operand-count :VAR
       :operands []
       :store 0x01
-      :branch-offset [0x02]
+      :branch-offset [true [0x33]]
       })))
 
   (testing "special cases: 2-byte operand types"
@@ -430,7 +430,7 @@
       :operand-count :VAR
       :operands []
       :store nil
-      :branch-offset [0x06]
+      :branch-offset [false [0x06 0x5e]]
       }))
     (is (= (decode (:check_unicode-LSLV instructions)) {
       :name :check_unicode
@@ -497,7 +497,11 @@
 
 (deftest branch-decoder
   (testing "branch-offset with single byte"
-    (is (= (decode-branch [0xfc]) [true 0x3c]))
-    (is (= (decode-branch [0x7c]) [false 0x3c]))
-    (is (= (decode-branch [0x58]) [false 0x18]))
+    (is (= (decode-branch [0xfc]) [true [0x3c]]))
+    (is (= (decode-branch [0x7c]) [false [0x3c]]))
+    (is (= (decode-branch [0x58]) [false [0x18]]))
+    )
+  (testing "branch-offset with two bytes"
+    (is (= (decode-branch [0xaa 0x29]) [true [0x2a 0x29]]))
+    (is (= (decode-branch [0x3a 0x5f]) [false [0x3a 0x5f]]))
     )))

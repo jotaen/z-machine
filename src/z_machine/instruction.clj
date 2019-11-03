@@ -41,15 +41,17 @@
   (let [
     [first second] bytes
     top-bit (bit-and (bit-shift-right first 7) 2r1)
+    second-highest-bit (bit-and (bit-shift-right first 6) 2r1)
     branch-on-true (= 2r1 top-bit)
-    offset (bit-and first 2r00111111)
+    has-two-bytes (= 2r0 second-highest-bit)
+    offset (vec (concat [(bit-and first 2r00111111)] (if has-two-bytes [second] nil)))
   ]
   [branch-on-true offset]))
 
 (defn parse-tail [instruction bytes]
   (def parsers [
     [:store (fn [bs] [(first bs) (rest bs)])]
-    [:branch (fn [bs] [[(first bs)] (rest bs)])]
+    [:branch (fn [bs] [(decode-branch bs) nil])]
   ])
   (defn do [[result remainder] [name fn]]
     (if (get instruction name) (fn remainder) [nil remainder]))
