@@ -65,6 +65,7 @@
         ]
         :store nil
         :branch-offset [false [0x03 0x69]]
+        :text-to-print nil
         :byte-count 5
       }))
     (is (= (decode (:dec_chk-SS instructions)) {
@@ -78,6 +79,7 @@
         ]
         :store nil
         :branch-offset [true [0x34 0x72]]
+        :text-to-print nil
         :byte-count 5
       }))
     (is (= (decode (:and-SS instructions)) {
@@ -91,6 +93,7 @@
         ]
         :store 0x11
         :branch-offset nil
+        :text-to-print nil
         :byte-count 4
       }))
     (is (= (decode (:insert_obj-SS instructions)) {
@@ -104,6 +107,7 @@
         ]
         :store nil
         :branch-offset nil
+        :text-to-print nil
         :byte-count 3
       })))
 
@@ -119,6 +123,7 @@
         ]
         :store nil
         :branch-offset [true [0x14]]
+        :text-to-print nil
         :byte-count 4
       }))
     (is (= (decode (:dec_chk-SV instructions)) {
@@ -132,6 +137,7 @@
         ]
         :store nil
         :branch-offset [true [0x16]]
+        :text-to-print nil
         :byte-count 4
       })))
 
@@ -147,6 +153,7 @@
         ]
         :store nil
         :branch-offset [true [0x16]]
+        :text-to-print nil
         :byte-count 4
       }))
     (is (= (decode (:dec_chk-VS instructions)) {
@@ -160,6 +167,7 @@
         ]
         :store nil
         :branch-offset [true [0x00]]
+        :text-to-print nil
         :byte-count 4
       })))
 
@@ -175,6 +183,7 @@
         ]
         :store nil
         :branch-offset [true [0x15]]
+        :text-to-print nil
         :byte-count 4
       }))
     (is (= (decode (:dec_chk-VV instructions)) {
@@ -188,6 +197,7 @@
         ]
         :store nil
         :branch-offset [true [0x17]]
+        :text-to-print nil
         :byte-count 4
       })))
 
@@ -202,6 +212,7 @@
         ]
         :store nil
         :branch-offset [true [0x13]]
+        :text-to-print nil
         :byte-count 4
       }))
     (is (= (decode (:get_sibling-L instructions)) {
@@ -214,6 +225,7 @@
         ]
         :store 0x64
         :branch-offset [false [0x02 0xfe]]
+        :text-to-print nil
         :byte-count 6
       })))
 
@@ -228,6 +240,7 @@
         ]
         :store nil
         :branch-offset [false [0x3f]]
+        :text-to-print nil
         :byte-count 3
       }))
     (is (= (decode (:call_1s-S instructions)) {
@@ -240,6 +253,7 @@
         ]
         :store 0xe7
         :branch-offset nil
+        :text-to-print nil
         :byte-count 3
       })))
 
@@ -254,6 +268,7 @@
         ]
         :store nil
         :branch-offset [true [0x13]]
+        :text-to-print nil
         :byte-count 3
       }))
     (is (= (decode (:ret-V instructions)) {
@@ -266,6 +281,7 @@
         ]
         :store nil
         :branch-offset nil
+        :text-to-print nil
         :byte-count 2
       })))
 
@@ -278,6 +294,7 @@
         :operands []
         :store nil
         :branch-offset nil
+        :text-to-print [2r01001 2r00001 2r10111]
         :byte-count 3
       }))
     (is (= (decode (:print_ret instructions)) {
@@ -288,6 +305,7 @@
         :operands []
         :store nil
         :branch-offset nil
+        :text-to-print [2r00000 2r00000 2r00000 2r01001 2r00001 2r10111]
         :byte-count 5
       }))
     (is (= (decode (:verify instructions)) {
@@ -298,6 +316,7 @@
         :operands []
         :store nil
         :branch-offset [true [0x18]]
+        :text-to-print nil
         :byte-count 2
       })))
 
@@ -313,6 +332,7 @@
         ]
         :store 0x00
         :branch-offset nil
+        :text-to-print nil
         :byte-count 6
       }))
     (is (= (decode (:mul-LL instructions)) {
@@ -326,6 +346,7 @@
         ]
         :store 0x00
         :branch-offset nil
+        :text-to-print nil
         :byte-count 7
       }))
     (is (= (decode (:test_attr-LS instructions)) {
@@ -339,6 +360,7 @@
         ]
         :store nil
         :branch-offset [false [0x04 0x32]]
+        :text-to-print nil
         :byte-count 7
       }))
     (is (= (decode (:insert_obj-VL instructions)) {
@@ -352,6 +374,7 @@
         ]
         :store nil
         :branch-offset nil
+        :text-to-print nil
         :byte-count 5
       }))
     (is (= (decode (:sub-LV instructions)) {
@@ -365,6 +388,7 @@
         ]
         :store 0x01
         :branch-offset nil
+        :text-to-print nil
         :byte-count 6
       }))
 
@@ -379,6 +403,7 @@
         ]
         :store 0x00
         :branch-offset nil
+        :text-to-print nil
         :byte-count 6
       })))
 
@@ -391,6 +416,7 @@
       :operands []
       :store nil
       :branch-offset nil
+      :text-to-print nil
       :byte-count 2
       }))
     (is (= (decode (:call_vs-LLL instructions)) {
@@ -405,6 +431,7 @@
       ]
       :store nil
       :branch-offset nil
+      :text-to-print nil
       :byte-count 8
       }))
     (is (= (decode (:scan_table instructions)) {
@@ -415,6 +442,7 @@
       :operands []
       :store 0x01
       :branch-offset [true [0x33]]
+      :text-to-print nil
       :byte-count 4
       })))
 
@@ -435,6 +463,7 @@
       ]
       :store 0x02
       :branch-offset nil
+      :text-to-print nil
       :byte-count 13
     }))
     (is (= (decode (:call_vn2 instructions)) {
@@ -449,6 +478,7 @@
       ]
       :store nil
       :branch-offset nil
+      :text-to-print nil
       :byte-count 7
     })))
 
@@ -463,6 +493,7 @@
       ]
       :store 0x08
       :branch-offset nil
+      :text-to-print nil
       :byte-count 6
       }))
     (is (= (decode (:save_undo instructions)) {
@@ -473,6 +504,7 @@
       :operands []
       :store 0x04
       :branch-offset nil
+      :text-to-print nil
       :byte-count 4
       }))
     (is (= (decode (:push_stack instructions)) {
@@ -483,6 +515,7 @@
       :operands []
       :store nil
       :branch-offset [false [0x06 0x5e]]
+      :text-to-print nil
       :byte-count 5
       }))
     (is (= (decode (:check_unicode-LSLV instructions)) {
@@ -498,6 +531,7 @@
       ]
       :store nil
       :branch-offset nil
+      :text-to-print nil
       :byte-count 9
       }))
     (is (= (decode (:log_shift-SV instructions)) {
@@ -511,6 +545,7 @@
       ]
       :store 0x09
       :branch-offset nil
+      :text-to-print nil
       :byte-count 6
       })))
 
@@ -562,17 +597,24 @@
     ))
 
 (deftest text2print-bytes-counter
-  (testing "text to print with one word"
+  (testing "text to print byte counter"
     (is (= (count-text2print-bytes [0xa4 0x37]) 2))
     (is (= (count-text2print-bytes [0x00 0x00 0xa4 0x37]) 4))
     (is (= (count-text2print-bytes [0x07 0x08 0x35 0x00 0xa4 0x37]) 6))))
+
+(deftest text2print-decoder
+  (testing "text to print with one word"
+    (is (= (text2print-decode [0xa4 0x37]) [2r01001 2r00001 2r10111]))
+    (is (= (text2print-decode [0x00 0x00 0xa4 0x37]) [2r00000 2r00000 2r00000 2r01001 2r00001 2r10111]))
+    (is (= (text2print-decode [0x07 0x08 0x35 0x00 0xa4 0x37]) [2r00001 2r11000 2r01000 2r01101 2r01000 2r00000 2r01001 2r00001 2r10111]))
+    ))
 
 (deftest integration-test
   (def example-sequence [0x05 0x02 0x00 0xd4 0xb2 0x11 0xaa 0x46 0x34 0x16 0x45 0x9c 0xa5 0xd6 0x2f 0x03 0xe8 0x02 0x00 0x8f 0x01 0x56])
   (testing "example sequence from z-machine spec"
     (is (= (decode-all example-sequence) [
-      {:name :inc_chk :form :form-long :opcode 5 :operand-count :2OP :operands [[:type-small-constant 2] [:type-small-constant 0]] :store nil :branch-offset [true [20]] :byte-count 4}
-      {:name :print :form :form-short :opcode 178 :operand-count :0OP :operands [] :store nil :branch-offset nil :byte-count 9}
-      {:name :mul :form :form-variable :opcode 214 :operand-count :2OP :operands [[:type-large-constant 3 232] [:type-variable 2]] :store 0 :branch-offset nil :byte-count 6}
-      {:name :call_1n :form :form-short :opcode 143 :operand-count :1OP :operands [[:type-large-constant 1 86]] :store nil :branch-offset nil :byte-count 3}
+      {:name :inc_chk :form :form-long :opcode 5 :operand-count :2OP :operands [[:type-small-constant 2] [:type-small-constant 0]] :store nil :branch-offset [true [20]] :text-to-print nil :byte-count 4}
+      {:name :print :form :form-short :opcode 178 :operand-count :0OP :operands [] :store nil :branch-offset nil :text-to-print [11 24 3 26 0 2 0 4 15 0 10 22] :byte-count 9}
+      {:name :mul :form :form-variable :opcode 214 :operand-count :2OP :operands [[:type-large-constant 3 232] [:type-variable 2]] :store 0 :branch-offset nil :text-to-print nil :byte-count 6}
+      {:name :call_1n :form :form-short :opcode 143 :operand-count :1OP :operands [[:type-large-constant 1 86]] :store nil :branch-offset nil :text-to-print nil :byte-count 3}
     ])))))

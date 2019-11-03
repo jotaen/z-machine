@@ -76,6 +76,15 @@
     is-last (= top-bit 2r1)]
     (if is-last 2 (+ 2 (count-text2print-bytes rest)))))
 
+(defn text2print-decode [bytes]
+  (if (empty? bytes) [] (let [
+    word (+ (bit-shift-left (first bytes) 8) (second bytes))
+    first-char (bit-shift-right (bit-and word  2r0111110000000000) 10)
+    second-char (bit-shift-right (bit-and word 2r0000001111100000) 5)
+    third-char (bit-and word  2r0000000000011111)
+    rest (drop 2 bytes)
+  ] (concat [first-char second-char third-char] (text2print-decode rest)))))
+
 (defn make-long-form [bytes]
   (let [
     [first second third & tail] bytes
@@ -102,6 +111,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :text-to-print nil
     :byte-count (+ 3 (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
@@ -116,7 +126,11 @@
       (<= first 0xaf) [[:type-variable second]]
       (<= first 0xbf) [])
     tail (get-tail 1 operands bytes)
-    [store branch-offset] (parse-tail instruction tail)]
+    [store branch-offset] (parse-tail instruction tail)
+    text2print-count (case first
+      (0xb2 0xb3) (count-text2print-bytes (rest bytes))
+      nil)
+  ]
   {
     :name (:name instruction)
     :form :form-short
@@ -125,8 +139,11 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :text-to-print (case first
+      (0xb2 0xb3) (text2print-decode (take-last text2print-count bytes))
+      nil)
     :byte-count (case first
-      (0xb2 0xb3) (+ 1 (count-text2print-bytes (clojure.core/rest bytes)))
+      (0xb2 0xb3) (+ 1 text2print-count)
       (+ 1 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset))))
   }))
 
@@ -148,6 +165,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :text-to-print nil
     :byte-count (+ 2 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
@@ -167,6 +185,7 @@
     :operands operands
     :store store
     :branch-offset nil
+    :text-to-print nil
     :byte-count (+ 3 (count-operand-bytes operands) (if store 1 0))
   }))
 
@@ -186,6 +205,7 @@
     :operands operands
     :store store
     :branch-offset branch-offset
+    :text-to-print nil
     :byte-count (+ 3 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset)))
   }))
 
