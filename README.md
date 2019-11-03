@@ -6,7 +6,6 @@
 
 ## Todos
 
-- Support `branch-offset` with multiple bytes too
 - Basic support `text-to-print`
 - Support `text-to-print` with proper string decoding
 - Add bytes consumed to result data structure
