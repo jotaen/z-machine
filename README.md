@@ -7,3 +7,5 @@
 ## Todos
 
 - Support `text-to-print` with proper string decoding
+- Refactor to parser combinators
+- Implement disassembler
