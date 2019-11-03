@@ -107,11 +107,15 @@
   }))
 
 (defn make-variable-form [bytes]
+  (def bytes-till-operands 2)
   (let [
     [first second & rest] bytes
+    instruction (instruction-table first)
     operand-types (decode-operand-types [second])
     operands (extract-operands operand-types rest)
     operand-count (if (<= first 0xdf) :2OP :VAR)
+    tail (drop (+ bytes-till-operands (count-operand-bytes operands)) bytes)
+    [store branch-offset] (parse-tail instruction tail)
   ]
   {
     :name (:name (instruction-table first))
@@ -119,8 +123,8 @@
     :opcode first
     :operand-count operand-count
     :operands operands
-    :store (last bytes)
-    :branch-offset nil
+    :store store
+    :branch-offset branch-offset
   }))
 
 (defn make-variable-form-special [bytes]
