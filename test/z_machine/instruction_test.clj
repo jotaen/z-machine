@@ -493,4 +493,11 @@
       :type-variable
       :type-variable
       :type-large-constant
-    ])))))
+    ]))))
+
+(deftest branch-decoder
+  (testing "branch-offset with single byte"
+    (is (= (decode-branch [0xfc]) [true 0x3c]))
+    (is (= (decode-branch [0x7c]) [false 0x3c]))
+    (is (= (decode-branch [0x58]) [false 0x18]))
+    )))

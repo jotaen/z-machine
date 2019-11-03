@@ -37,6 +37,15 @@
               (conj result [:type-variable (first bytes)]))))))
     (iter operand-types bytes []))
 
+(defn decode-branch [bytes]
+  (let [
+    [first second] bytes
+    top-bit (bit-and (bit-shift-right first 7) 2r1)
+    branch-on-true (= 2r1 top-bit)
+    offset (bit-and first 2r00111111)
+  ]
+  [branch-on-true offset]))
+
 (defn parse-tail [instruction bytes]
   (def parsers [
     [:store (fn [bs] [(first bs) (rest bs)])]
