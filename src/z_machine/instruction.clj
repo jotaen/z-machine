@@ -125,7 +125,9 @@
     :operands operands
     :store store
     :branch-offset branch-offset
-    :byte-count (+ 1 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset)))
+    :byte-count (case first
+      (0xb2 0xb3) (+ 1 (count-text2print-bytes (clojure.core/rest bytes)))
+      (+ 1 (count-operand-bytes operands) (if store 1 0) (count (clojure.core/second branch-offset))))
   }))
 
 (defn make-variable-form [bytes]

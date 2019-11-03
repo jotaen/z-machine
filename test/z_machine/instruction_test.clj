@@ -24,6 +24,8 @@
   :ret-V [0xab 0x77]
 
   ; SHORT FORM, 0OP
+  :print [0xb2 0xa4 0x37]
+  :print_ret [0xb3 0x00 0x00 0xa4 0x37]
   :verify [0xbd 0xd8]
 
   ; VAR FORM, 2OP 
@@ -268,6 +270,26 @@
       })))
 
   (testing "range 0xb0 to 0xbf"
+    (is (= (decode (:print instructions)) {
+        :name :print
+        :form :form-short
+        :opcode 0xb2
+        :operand-count :0OP
+        :operands []
+        :store nil
+        :branch-offset nil
+        :byte-count 3
+      }))
+    (is (= (decode (:print_ret instructions)) {
+        :name :print_ret
+        :form :form-short
+        :opcode 0xb3
+        :operand-count :0OP
+        :operands []
+        :store nil
+        :branch-offset nil
+        :byte-count 5
+      }))
     (is (= (decode (:verify instructions)) {
         :name :verify
         :form :form-short
