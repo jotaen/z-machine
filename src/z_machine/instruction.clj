@@ -99,7 +99,7 @@
     tail (get-tail 1 operands bytes)
     [store branch-offset] (parse-tail instruction tail)]
   {
-    :name (:name (instruction-table first))
+    :name (:name instruction)
     :form :form-short
     :opcode first
     :operand-count operand-count
@@ -119,7 +119,7 @@
     [store branch-offset] (parse-tail instruction tail)
   ]
   {
-    :name (:name (instruction-table first))
+    :name (:name instruction)
     :form :form-variable
     :opcode first
     :operand-count operand-count
@@ -131,11 +131,12 @@
 (defn make-variable-form-special [bytes]
   (let [
     [first second third & rest] bytes
+    instruction (instruction-table first)
     operand-types (concat (decode-operand-types [second]) (decode-operand-types [third]))
     operands (extract-operands operand-types rest)
   ]
   {
-    :name (:name (instruction-table first))
+    :name (:name instruction)
     :form :form-variable
     :opcode first
     :operand-count :VAR
@@ -147,16 +148,19 @@
 (defn make-extended-form [bytes]
   (let [
     [first second third & rest] bytes
+    instruction (instruction-table-extended second)
     operand-types (decode-operand-types [third])
     operands (extract-operands operand-types rest)
+    tail (get-tail 3 operands bytes)
+    [store branch-offset] (parse-tail instruction tail)
   ] {
-    :name (:name (instruction-table-extended second))
+    :name (:name instruction)
     :form :form-extended
     :opcode second
     :operand-count :VAR
     :operands operands
-    :store (last bytes)
-    :branch-offset nil
+    :store store
+    :branch-offset branch-offset
   }))
 
 (defn decode [bytes] 

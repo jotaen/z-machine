@@ -46,6 +46,7 @@
   :log_shift [0xbe 0x02 0x6f 0xae 0x8c 0x09]
   :set_font [0xbe 0x04 0x3f 0x10 0xd2 0x08]
   :save_undo [0xbe 0x09 0xff 0x04]
+  :push_stack [0xbe 0x18 0xff 0x06]
 })
 
 (deftest instruction-decoder
@@ -420,6 +421,15 @@
       :operands []
       :store 0x04
       :branch-offset nil
+      }))
+    (is (= (decode (:push_stack instructions)) {
+      :name :push_stack
+      :form :form-extended
+      :opcode 0x18
+      :operand-count :VAR
+      :operands []
+      :store nil
+      :branch-offset [0x06]
       }))
     (is (= (decode (:log_shift instructions)) {
       :name :log_shift
