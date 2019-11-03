@@ -7,6 +7,7 @@
   :inc_chk-SS [0x05 0x02 0x00 0xd4]
   :dec_chk-SS [0x04 0x12 0xab 0xd5]
   :and-SS [0x09 0x01 0x00 0x11]
+  :insert_obj-SS [0x0e 0x54 0xdc]
   :inc_chk-SV [0x25 0x02 0x00 0xd4]
   :dec_chk-SV [0x24 0x21 0x1e 0xd6]
   :inc_chk-VS [0x45 0x00 0x02 0xd6]
@@ -77,6 +78,18 @@
         ]
         :branch-offset nil
         :store 0x11
+      }))
+    (is (= (decode (:insert_obj-SS instructions)) {
+        :name :insert_obj
+        :form :form-long
+        :opcode 0x0e
+        :operand-count :2OP
+        :operands [
+          [:type-small-constant 0x54]
+          [:type-small-constant 0xdc]
+        ]
+        :branch-offset nil
+        :store nil
       })))
 
   (testing "range 0x20 to 0x3f"
