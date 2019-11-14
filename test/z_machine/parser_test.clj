@@ -9,6 +9,7 @@
       [[nil str]])))
 
 (def double-a-parser (sequence-parser symbol-parser-a symbol-parser-a))
+(def triple-a-parser (sequence-parser double-a-parser symbol-parser-a))
 
 (deftest parse-test
   (testing "parse"
@@ -27,4 +28,10 @@
     (is (= (double-a-parser "ab") [[:a "b"] [nil "b"]]))
     (is (= (double-a-parser "ba") [[nil "ba"]]))
     (is (= (double-a-parser "bb") [[nil "bb"]]))
+    (is (= (triple-a-parser "aaa") [[:a "aa"] [:a "a"] [:a ""]]))
+    (testing "associativity"
+      (def p1 (sequence-parser double-a-parser symbol-parser-a))
+      (def p2 (sequence-parser symbol-parser-a double-a-parser))
+      (is (= (p1 "aaa") (p2 "aaa")))
+    )
   ))

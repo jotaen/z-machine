@@ -2,10 +2,18 @@
 
 (defn parse [parser str] (map first (parser str)))
 
+(def error-token nil)
+(def error-token? nil?)
+
 (defn sequence-parser [p1 p2]
+  (defn and-then-concat [next-fn step]
+    (let [[token remainder] (last step)]
+      (if (error-token? token)
+          [[error-token remainder]]
+          (vec (concat step (next-fn remainder)))
+  )))
   (fn [str]
-    (let [[val1 rst1] (first (p1 str))]
-      (if (nil? val1)
-        [[nil str]]
-        (let [[val2 rst2] (first (p2 rst1))]
-          [[val1 rst1] [val2 rst2]])))))
+    (->> (p1 str)
+      (and-then-concat (fn [rst1] (p2 rst1)))
+  )
+))
