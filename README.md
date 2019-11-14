@@ -7,4 +7,5 @@
 ## Todos
 
 - Refactor to parser combinators
+    - `choose-parser`
 - Implement disassembler
