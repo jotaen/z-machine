@@ -13,10 +13,10 @@
 (def symbol-parser-b (make-symbol-parser \b :b))
 (def symbol-parser-c (make-symbol-parser \c :c))
 
-(def double-a-parser (sequence-parser symbol-parser-a symbol-parser-a))
-(def triple-a-parser (sequence-parser double-a-parser symbol-parser-a))
-(def enum-ab-parser (enumeration-parser symbol-parser-a symbol-parser-b))
-(def enum-abc-parser (enumeration-parser enum-ab-parser symbol-parser-c))
+(def double-a-parser (and-parser symbol-parser-a symbol-parser-a))
+(def triple-a-parser (and-parser double-a-parser symbol-parser-a))
+(def enum-ab-parser (or-parser symbol-parser-a symbol-parser-b))
+(def enum-abc-parser (or-parser enum-ab-parser symbol-parser-c))
    
 (deftest parse-test
   (testing "parse"
@@ -27,21 +27,21 @@
   (testing "integration"
     (def hello-parser
       (->                (make-symbol-parser \h :h)
-        (sequence-parser (make-symbol-parser \e :e))
-        (sequence-parser (make-symbol-parser \l :l))
-        (sequence-parser (make-symbol-parser \l :l))
-        (sequence-parser (make-symbol-parser \o :o))
+        (and-parser (make-symbol-parser \e :e))
+        (and-parser (make-symbol-parser \l :l))
+        (and-parser (make-symbol-parser \l :l))
+        (and-parser (make-symbol-parser \o :o))
         )
     )
     (def world-parser
       (->                (make-symbol-parser \w :w)
-        (sequence-parser (make-symbol-parser \o :o))
-        (sequence-parser (make-symbol-parser \r :r))
-        (sequence-parser (make-symbol-parser \l :l))
-        (sequence-parser (make-symbol-parser \d :d))
+        (and-parser (make-symbol-parser \o :o))
+        (and-parser (make-symbol-parser \r :r))
+        (and-parser (make-symbol-parser \l :l))
+        (and-parser (make-symbol-parser \d :d))
         )
     )
-    (def integration-parser (enumeration-parser hello-parser world-parser))
+    (def integration-parser (or-parser hello-parser world-parser))
     (is (= (parse integration-parser "hello") [:h :e :l :l :o]))
     (is (= (parse integration-parser "world") [:w :o :r :l :d]))
     (is (= (parse integration-parser "w812763") [:w nil]))
@@ -64,8 +64,8 @@
     (is (= (double-a-parser "a12") [[:a "12"] [nil "12"]]))
     (is (= (triple-a-parser "a1a") [[:a "1a"] [nil "1a"]]))
     (testing "associativity"
-      (def p1 (sequence-parser double-a-parser symbol-parser-a))
-      (def p2 (sequence-parser symbol-parser-a double-a-parser))
+      (def p1 (and-parser double-a-parser symbol-parser-a))
+      (def p2 (and-parser symbol-parser-a double-a-parser))
       (is (= (p1 "aaa") (p2 "aaa")))
     )
   )

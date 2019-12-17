@@ -26,9 +26,9 @@
       )
   )
   (def parser (-> bit-pair-parser
-    (sequence-parser bit-pair-parser)
-    (sequence-parser bit-pair-parser)
-    (sequence-parser bit-pair-parser)
+    (and-parser bit-pair-parser)
+    (and-parser bit-pair-parser)
+    (and-parser bit-pair-parser)
   ))
   (let [
     [first] bytes
