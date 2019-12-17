@@ -14,7 +14,7 @@
   )))
   (fn [str]
     (->> (p1 str)
-      (and-then-concat (fn [rst1] (p2 rst1)))
+      (and-then-concat p2)
   )
 ))
 

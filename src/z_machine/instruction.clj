@@ -1,5 +1,6 @@
 (ns z-machine.instruction
-  (:require [z-machine.instruction-table :refer :all]))
+  (:require [z-machine.instruction-table :refer :all])
+  (:require [z-machine.parser :refer :all]))
 
 (defn decode-operand-types [bytes]
   (defn optype [val]
@@ -8,14 +9,32 @@
       2r10 :type-variable
       2r01 :type-small-constant
       2r11 :type-omitted))
+  (defn make-bit-pair-sequence [byte]
+    [
+      (bit-and (bit-shift-right byte 6) 2r11)
+      (bit-and (bit-shift-right byte 4) 2r11)
+      (bit-and (bit-shift-right byte 2) 2r11)
+      (bit-and (bit-shift-right byte 0) 2r11)
+    ]
+  )
+  (defn bit-pair-parser [bit-pair-sequence]
+    (let [
+      first-pair (first bit-pair-sequence)
+      remaining (rest bit-pair-sequence)
+      ]
+      [[(optype first-pair) remaining]]
+      )
+  )
+  (def parser (-> bit-pair-parser
+    (sequence-parser bit-pair-parser)
+    (sequence-parser bit-pair-parser)
+    (sequence-parser bit-pair-parser)
+  ))
   (let [
     [first] bytes
-    type1 (optype (bit-and (bit-shift-right first 6) 2r11))
-    type2 (optype (bit-and (bit-shift-right first 4) 2r11))
-    type3 (optype (bit-and (bit-shift-right first 2) 2r11))
-    type4 (optype (bit-and (bit-shift-right first 0) 2r11))
+    bit-pairs (make-bit-pair-sequence first)
     ]
-    (filter (fn [x] (not= x :type-omitted)) [type1 type2 type3 type4])))
+    (filter (fn [x] (not= x :type-omitted)) (parse parser bit-pairs))))
 
 (defn extract-operands [operand-types bytes]
     (defn iter [operand-types bytes result]
