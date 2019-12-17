@@ -6,11 +6,11 @@
 (def error-token? nil?)
 
 (defn sequence-parser [p1 p2]
-  (defn and-then-concat [next-fn step]
-    (let [[token remainder] (last step)]
+  (defn and-then-concat [next-fn steps]
+    (let [[token remainder] (last steps)]
       (if (error-token? token)
-          [[error-token remainder]]
-          (vec (concat step (next-fn remainder)))
+          steps
+          (vec (concat steps (next-fn remainder)))
   )))
   (fn [str]
     (->> (p1 str)

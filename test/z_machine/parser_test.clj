@@ -2,34 +2,51 @@
   (:require [clojure.test :refer :all]
             [z-machine.parser :refer :all]))
 
-(defn symbol-parser-a [str] 
-  (let [first-char (first str)]
-    (if (= first-char \a)
-      [[:a (subs str 1)]]
-      [[nil str]])))
+(defn make-symbol-parser [char symbol]
+  (fn [str]
+    (let [first-char (first str)]
+      (if (= first-char char)
+        [[symbol (subs str 1)]]
+        [[nil str]]))))
 
-(defn symbol-parser-b [str] 
-  (let [first-char (first str)]
-    (if (= first-char \b)
-      [[:b (subs str 1)]]
-      [[nil str]])))
-
-(defn symbol-parser-c [str] 
-  (let [first-char (first str)]
-    (if (= first-char \c)
-      [[:c (subs str 1)]]
-      [[nil str]])))
+(def symbol-parser-a (make-symbol-parser \a :a))
+(def symbol-parser-b (make-symbol-parser \b :b))
+(def symbol-parser-c (make-symbol-parser \c :c))
 
 (def double-a-parser (sequence-parser symbol-parser-a symbol-parser-a))
 (def triple-a-parser (sequence-parser double-a-parser symbol-parser-a))
 (def enum-ab-parser (enumeration-parser symbol-parser-a symbol-parser-b))
 (def enum-abc-parser (enumeration-parser enum-ab-parser symbol-parser-c))
-
+   
 (deftest parse-test
   (testing "parse"
     (is (= (parse symbol-parser-a "a") [:a]))
     (is (= (parse symbol-parser-a "c") [nil]))
     (is (= (parse double-a-parser "aa") [:a :a]))
+  )
+  (testing "integration"
+    (def hello-parser
+      (->                (make-symbol-parser \h :h)
+        (sequence-parser (make-symbol-parser \e :e))
+        (sequence-parser (make-symbol-parser \l :l))
+        (sequence-parser (make-symbol-parser \l :l))
+        (sequence-parser (make-symbol-parser \o :o))
+        )
+    )
+    (def world-parser
+      (->                (make-symbol-parser \w :w)
+        (sequence-parser (make-symbol-parser \o :o))
+        (sequence-parser (make-symbol-parser \r :r))
+        (sequence-parser (make-symbol-parser \l :l))
+        (sequence-parser (make-symbol-parser \d :d))
+        )
+    )
+    (def integration-parser (enumeration-parser hello-parser world-parser))
+    (is (= (parse integration-parser "hello") [:h :e :l :l :o]))
+    (is (= (parse integration-parser "world") [:w :o :r :l :d]))
+    (is (= (parse integration-parser "w812763") [:w nil]))
+    (is (= (parse integration-parser "worl812763") [:w :o :r :l nil]))
+    (is (= (parse integration-parser "a") [nil]))
   ))
 
 (deftest parser-test
@@ -43,6 +60,9 @@
     (is (= (double-a-parser "ba") [[nil "ba"]]))
     (is (= (double-a-parser "bb") [[nil "bb"]]))
     (is (= (triple-a-parser "aaa") [[:a "aa"] [:a "a"] [:a ""]]))
+    (is (= (double-a-parser "a1") [[:a "1"] [nil "1"]]))
+    (is (= (double-a-parser "a12") [[:a "12"] [nil "12"]]))
+    (is (= (triple-a-parser "a1a") [[:a "1a"] [nil "1a"]]))
     (testing "associativity"
       (def p1 (sequence-parser double-a-parser symbol-parser-a))
       (def p2 (sequence-parser symbol-parser-a double-a-parser))
