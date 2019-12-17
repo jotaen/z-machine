@@ -8,8 +8,22 @@
       [[:a (subs str 1)]]
       [[nil str]])))
 
+(defn symbol-parser-b [str] 
+  (let [first-char (first str)]
+    (if (= first-char \b)
+      [[:b (subs str 1)]]
+      [[nil str]])))
+
+(defn symbol-parser-c [str] 
+  (let [first-char (first str)]
+    (if (= first-char \c)
+      [[:c (subs str 1)]]
+      [[nil str]])))
+
 (def double-a-parser (sequence-parser symbol-parser-a symbol-parser-a))
 (def triple-a-parser (sequence-parser double-a-parser symbol-parser-a))
+(def enum-ab-parser (enumeration-parser symbol-parser-a symbol-parser-b))
+(def enum-abc-parser (enumeration-parser enum-ab-parser symbol-parser-c))
 
 (deftest parse-test
   (testing "parse"
@@ -34,4 +48,10 @@
       (def p2 (sequence-parser symbol-parser-a double-a-parser))
       (is (= (p1 "aaa") (p2 "aaa")))
     )
-  ))
+  )
+  (testing "enumeration parser"
+    (is (= (enum-ab-parser "a") [[:a ""]]))
+    (is (= (enum-ab-parser "b") [[:b ""]]))
+    (is (= (enum-ab-parser "c") [[nil "c"]]))
+    (is (= (enum-abc-parser "c") [[:c ""]]))
+))
