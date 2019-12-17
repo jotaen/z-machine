@@ -15,6 +15,11 @@
   (fn [input] (next-unless-error p2 (p1 input))
 ))
 
+(defn sequence-parser [ps]
+  (if (= (count ps) 1)
+    (first ps)
+    (and-parser (first ps) (sequence-parser (rest ps)))))
+
 (defn or-parser [p1 p2]
   (fn [input]
     (let [

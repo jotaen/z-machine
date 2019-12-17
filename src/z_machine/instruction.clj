@@ -25,11 +25,7 @@
       [[(optype first-pair) remaining]]
       )
   )
-  (def parser (-> bit-pair-parser
-    (and-parser bit-pair-parser)
-    (and-parser bit-pair-parser)
-    (and-parser bit-pair-parser)
-  ))
+  (def parser (sequence-parser (repeat 4 bit-pair-parser)))
   (let [
     [first] bytes
     bit-pairs (make-bit-pair-sequence first)
